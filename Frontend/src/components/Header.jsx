@@ -5,64 +5,69 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+    setIsMenuOpen((prev) => !prev);
   };
 
   const closeMenu = () => {
     setIsMenuOpen(false);
   };
 
-  // Scroll Lock for Mobile Menu
   useEffect(() => {
     if (isMenuOpen) {
-      document.body.classList.add('overflow-hidden');
+      document.body.style.overflow = 'hidden';
     } else {
-      document.body.classList.remove('overflow-hidden');
+      document.body.style.overflow = 'auto';
     }
-    return () => document.body.classList.remove('overflow-hidden');
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
   }, [isMenuOpen]);
 
   return (
-    <header className="bg-black text-white px-4 py-3 fixed w-full shadow-lg z-50">
+    <header className=" text-black px-4 py-3 fixed w-full shadow-md z-50">
       <div className="container mx-auto flex justify-between items-center">
         {/* Logo */}
-        <div className="w-16">
+        <div className="w-32 md:w-52 flex justify-between justify-center items-center">
           <a href="/">
-            <img src={Logo} alt="MediSync Logo" className="w-full h-auto" />
+            <img src={Logo} alt="MediSync Logo" className="w-full h-auto" /> 
           </a>
+          <div className="bg-gradient-to-r from-blue-400 to-purple-600 text-transparent bg-clip-text font-bold text-lg md:text-3xl">MediSync</div>
         </div>
         {/* Navigation */}
         <nav
-          className={`fixed top-0 left-0 h-full w-full bg-black bg-opacity-95 transform ${
+          className={`fixed top-0 left-0 h-full w-64 bg-black text-white transform ${
             isMenuOpen ? 'translate-x-0' : '-translate-x-full'
-          } transition-transform duration-300 z-50 md:relative md:flex md:translate-x-0 md:h-auto md:w-auto md:bg-transparent md:bg-opacity-100`}
+          } transition-transform duration-300 ease-in-out md:relative md:h-auto md:w-auto md:bg-transparent md:text-black md:flex md:translate-x-0`}
         >
-          <ul className="flex flex-col space-y-6 items-center mt-16 md:flex-row md:space-y-0 md:space-x-6 md:mt-0">
+          <ul className="flex flex-col space-y-6 p-8 md:flex-row md:space-y-0 md:space-x-6 md:p-0">
             <li>
-              <a
-                href="/appointments"
-                className="hover:text-yellow-400 text-lg"
-                onClick={closeMenu}
-              >
+              <a href="/" className="hover:text-blue-400 text-lg" onClick={closeMenu}>
+                Home
+              </a>
+            </li>
+            <li>
+              <a href="/health-records" className="hover:text-blue-400 text-lg" onClick={closeMenu}>
+                Health Records
+              </a>
+            </li>
+            <li>
+              <a href="/appointments" className="hover:text-blue-400 text-lg" onClick={closeMenu}>
                 Appointments
               </a>
             </li>
             <li>
-              <a
-                href="/profile"
-                className="hover:text-yellow-400 text-lg"
-                onClick={closeMenu}
-              >
-                Profile
+              <a href="/medication-tracker" className="hover:text-blue-400 text-lg" onClick={closeMenu}>
+                Medication Tracker
               </a>
             </li>
             <li>
-              <a
-                href="/about"
-                className="hover:text-yellow-400 text-lg"
-                onClick={closeMenu}
-              >
+              <a href="/about" className="hover:text-blue-400 text-lg" onClick={closeMenu}>
                 About
+              </a>
+            </li>
+            <li>
+              <a href="/profile" className="hover:text-blue-400 text-lg" onClick={closeMenu}>
+                Profile
               </a>
             </li>
           </ul>
