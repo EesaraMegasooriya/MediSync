@@ -35,7 +35,7 @@ const Header = () => {
         </div>
         {/* Navigation */}
         <nav
-          className={`fixed top-0 left-0 h-full w-64 bg-black text-white transform ${
+          className={`font-bold fixed top-0 left-0 h-full w-64 bg-black text-white transform ${
             isMenuOpen ? 'translate-x-0' : '-translate-x-full'
           } transition-transform duration-300 ease-in-out md:relative md:h-auto md:w-auto md:bg-transparent md:text-black md:flex md:translate-x-0`}
         >
