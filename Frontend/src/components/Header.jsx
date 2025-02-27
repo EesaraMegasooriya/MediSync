@@ -24,10 +24,11 @@ const Header = () => {
   }, [isMenuOpen]);
 
   return (
-    <header className=" text-black px-4 py-3 fixed w-full shadow-md z-50">
+    <div className="">
+    <header className="text-black px-4 py-3 fixed w-full shadow-md z-50 bg-white top-0 left-0">
       <div className="container mx-auto flex justify-between items-center">
         {/* Logo */}
-        <div className="w-32 md:w-52 flex justify-between justify-center items-center">
+        <div className="w-32 md:w-52 flex justify-between items-center">
           <a href="/">
             <img src={Logo} alt="MediSync Logo" className="w-full h-auto" /> 
           </a>
@@ -81,6 +82,8 @@ const Header = () => {
         </button>
       </div>
     </header>
+    <div className="pt-20 md:pt-24"></div> {/* Pushes content down to prevent overlap */}
+    </div>
   );
 };
 

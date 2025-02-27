@@ -1,4 +1,5 @@
 import Header from './components/Header'
+import UserRegister from './components/Register'
 import './App.css'
 
 function App() {
@@ -7,6 +8,7 @@ function App() {
   return (
     <div>
       <Header/>
+      <UserRegister/>
     </div>
   )
 }
