@@ -22,34 +22,35 @@ function HomeMid() {
         
 
         {/* Features Section */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 w-full max-w-5xl">
-          {/* Food Recommendation */}
-          <div className="w-full max-w-xs text-center flex flex-col items-center">
-            <img src={Food} className="w-14 pb-4" alt="Food Recommendation" />
-            <div className="font-bold text-lg">Food Recommendation</div>
-            <div className="text-gray-500 text-sm">
-              We provide food accommodation according to your calorie requirements.
-            </div>
-          </div>
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 w-full max-w-5xl mx-auto text-center">
+  {/* Food Recommendation */}
+  <div className="w-full max-w-xs flex flex-col items-center mx-auto">
+    <img src={Food} className="w-14 pb-4" alt="Food Recommendation" />
+    <div className="font-bold text-lg">Food Recommendation</div>
+    <div className="text-gray-500 text-sm">
+      We provide food accommodation according to your calorie requirements.
+    </div>
+  </div>
 
-          {/* ChatBot */}
-          <div className="w-full max-w-xs text-center flex flex-col items-center">
-            <img src={Chat} className="w-14 pb-4" alt="ChatBot" />
-            <div className="font-bold text-lg">ChatBot</div>
-            <div className="text-gray-500 text-sm">
-              Solve your queries by interacting with our bot.
-            </div>
-          </div>
+  {/* ChatBot */}
+  <div className="w-full max-w-xs flex flex-col items-center mx-auto">
+    <img src={Chat} className="w-14 pb-4" alt="ChatBot" />
+    <div className="font-bold text-lg">ChatBot</div>
+    <div className="text-gray-500 text-sm">
+      Solve your queries by interacting with our bot.
+    </div>
+  </div>
 
-          {/* Nutritional Value */}
-          <div className="w-full max-w-xs text-center flex flex-col items-center">
-            <img src={State} className="w-14 pb-4" alt="Nutritional Value" />
-            <div className="font-bold text-lg">Nutritional Value</div>
-            <div className="text-gray-500 text-sm">
-              Get all the nutritional values of your preferred dish.
-            </div>
-          </div>
-        </div>
+  {/* Nutritional Value */}
+  <div className="w-full max-w-xs flex flex-col items-center mx-auto">
+    <img src={State} className="w-14 pb-4" alt="Nutritional Value" />
+    <div className="font-bold text-lg">Nutritional Value</div>
+    <div className="text-gray-500 text-sm">
+      Get all the nutritional values of your preferred dish.
+    </div>
+  </div>
+</div>
+
       </div>
     </div>
   );
