@@ -1,6 +1,8 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const HealthRecords = () => {
+  const navigate = useNavigate();
   const records = [
     { title: "Diabetes", date: "April 4th", level: "90 mg/dL", status: "Normal" },
     { title: "Fatty Liver", date: "September 3rd", level: "Normal Fatty liver", status: "Normal" },
@@ -22,7 +24,12 @@ const HealthRecords = () => {
 
       <div className="flex gap-4 mt-6">
         <button className="bg-blue-500 text-white px-6 py-2 rounded-md">View Records</button>
-        <button className="bg-blue-500 text-white px-6 py-2 rounded-md">Add Records</button>
+        <button
+          className="bg-blue-500 text-white px-6 py-2 rounded-md"
+          onClick={() => navigate("/records/add")}
+        >
+          Add Records
+        </button>
       </div>
 
       <div className="grid grid-cols-3 gap-6 mt-8">
