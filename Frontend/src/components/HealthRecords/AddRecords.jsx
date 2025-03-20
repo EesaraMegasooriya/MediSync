@@ -10,8 +10,7 @@ const AddRecords = () => {
           <input type="date" placeholder="Diagnosis Date" className="border p-2 rounded" />
           <input type="text" placeholder="Symptoms" className="border p-2 rounded col-span-2" />
           <input type="text" placeholder="Diagnosed By" className="border p-2 rounded" />
-          <input type="text" placeholder="Current Status" className="border p-2 rounded" />
-          <input type="date" placeholder="Follow-up Date" className="border p-2 rounded" />
+          <input type="text" placeholder="Doctors Note" className="border p-2 rounded" />
           <input type="text" placeholder="Hospital name" className="border p-2 rounded" />
           <input type="text" placeholder="Level" className="border p-2 rounded" />
           <input type="text" placeholder="Lab Test Result" className="border p-2 rounded" />
