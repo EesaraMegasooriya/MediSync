@@ -11,6 +11,7 @@ const HealthRecords = () => {
 
   return (
     <div className="bg-gradient-to-r from-blue-100 to-white min-h-screen p-6">
+      
       <h1 className="text-3xl font-bold text-blue-600">Health Records</h1>
 
       <div className="flex justify-between items-center mt-4">
