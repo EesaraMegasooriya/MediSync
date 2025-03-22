@@ -24,7 +24,7 @@ const HealthRecords = () => {
       </div>
 
       <div className="flex gap-4 mt-6">
-        <button className="bg-blue-500 text-white px-6 py-2 rounded-md" onClick={() => navigate("/records/viewrecord")}>View Records</button>
+        <button className="bg-blue-500 text-white px-6 py-2 rounded-md" onClick={() => navigate("/records/Allrecords")}>View Records</button>
         <button
           className="bg-blue-500 text-white px-6 py-2 rounded-md"
           onClick={() => navigate("/records/add")}
@@ -47,12 +47,6 @@ const HealthRecords = () => {
               onClick={() => navigate(`/records/view/${index}`)}
             >
               View
-            </button>
-            <button
-              className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md"
-              onClick={() => navigate(`/records/update/${index}`)}
-            >
-              Update
             </button>
           </div>
         ))}
