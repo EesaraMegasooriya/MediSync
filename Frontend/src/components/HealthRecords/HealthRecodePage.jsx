@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import MedicalRecordForm from "./Update";
 
 const HealthRecords = () => {
   const navigate = useNavigate();
@@ -12,7 +13,7 @@ const HealthRecords = () => {
   return (
     <div className="bg-gradient-to-r from-blue-100 to-white min-h-screen p-6">
       <h1 className="text-3xl font-bold text-blue-600">Health Records</h1>
-
+      
       <div className="flex justify-between items-center mt-4">
         <input
           type="text"
@@ -23,7 +24,7 @@ const HealthRecords = () => {
       </div>
 
       <div className="flex gap-4 mt-6">
-        <button className="bg-blue-500 text-white px-6 py-2 rounded-md">View Records</button>
+        <button className="bg-blue-500 text-white px-6 py-2 rounded-md" onClick={() => navigate("/records/viewrecord")}>View Records</button>
         <button
           className="bg-blue-500 text-white px-6 py-2 rounded-md"
           onClick={() => navigate("/records/add")}
@@ -41,7 +42,18 @@ const HealthRecords = () => {
             <p className={`font-bold ${record.status === "High" ? "text-red-500" : "text-green-500"}`}>
               Current Status: {record.status}
             </p>
-            <button className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md">View</button>
+            <button
+              className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md"
+              onClick={() => navigate(`/records/view/${index}`)}
+            >
+              View
+            </button>
+            <button
+              className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md"
+              onClick={() => navigate(`/records/update/${index}`)}
+            >
+              Update
+            </button>
           </div>
         ))}
       </div>
