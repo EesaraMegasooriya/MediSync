@@ -4,6 +4,9 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 
 function AddPrescriptions() {
+
+  
+
   const [tips, setTips] = useState(['']);
   const [prescriptions, setPrescriptions] = useState(['']);
   const [medicationName, setMedicationName] = useState('');
@@ -41,7 +44,12 @@ function AddPrescriptions() {
   };
 
   const handleSubmit = async () => {
-    const formData = new FormData();
+    const username = localStorage.getItem('username'); // ✅ Make sure this returns a value
+
+const formData = new FormData();
+formData.append('username', username); // ✅ This line must exist BEFORE sending
+ // ✅ fetch userId
+    
     formData.append('medicationName', medicationName);
     formData.append('doctorName', doctorName);
     if (selectedImage) {

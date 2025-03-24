@@ -3,10 +3,12 @@ const Prescription = require('../Models/PresModel');
 // @desc Create new prescription
 exports.createPrescription = async (req, res) => {
   try {
-    const { medicationName, doctorName, prescriptions, tips } = req.body;
+    const { medicationName, doctorName, prescriptions, tips, username } = req.body;
+
     const image = req.file ? req.file.filename : '';
 
     const newPrescription = new Prescription({
+      username, 
       medicationName,
       image,
       doctorName,
