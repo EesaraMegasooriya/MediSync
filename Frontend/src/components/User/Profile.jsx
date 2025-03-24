@@ -104,11 +104,10 @@ const handleLogout = () => {
   localStorage.removeItem('profilePicture');
   localStorage.removeItem('userId');
 
-  // 👇 Notify Header and other listeners to update immediately
-  window.dispatchEvent(new Event('authChange'));
-
+  window.dispatchEvent(new Event('authChange')); // 👈 Force header to update
   navigate('/login');
 };
+
 
 
   const [editMode, setEditMode] = useState(false);
@@ -123,9 +122,16 @@ const [emergency2, setEmergency2] = useState('');
 const [profileImageFile, setProfileImageFile] = useState(null);
 
 
+
+
 useEffect(() => {
   const fetchProfile = async () => {
     const userId = localStorage.getItem('userId');
+
+    const token = localStorage.getItem('token');
+  if (!token) {
+    navigate('/login'); // Redirect if no token
+  }
     
     if (!userId) return;
 
@@ -156,7 +162,7 @@ useEffect(() => {
   };
 
   fetchProfile();
-}, []);
+}, [navigate]);
 
 
 const handleSave = async () => {
