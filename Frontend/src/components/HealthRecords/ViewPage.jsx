@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const records = [
   {
@@ -22,6 +23,10 @@ const records = [
 ];
 
 const ReportCard = ({ title, date, level, status }) => {
+
+
+  const navigate = useNavigate();
+
   return (
     <div className="bg-white shadow-lg rounded-lg p-6 text-center w-72">
       <h2 className="font-bold text-lg">{title}</h2>
@@ -31,7 +36,7 @@ const ReportCard = ({ title, date, level, status }) => {
         Current Status: {status}
       </p>
       <div className="flex justify-center gap-4 mt-4">
-        <button className="bg-blue-500 text-white px-4 py-2 rounded-lg">View</button>
+        <button className="bg-blue-500 text-white px-4 py-2 rounded-lg" onClick={() => navigate("/records/update")}>View</button>
         <button className="bg-blue-500 text-white px-4 py-2 rounded-lg">Download</button>
       </div>
     </div>
@@ -40,6 +45,8 @@ const ReportCard = ({ title, date, level, status }) => {
 
 const ViewRecords = () => {
   return (
+    
+    <main id="main" className="main">
     <div className="p-8 bg-gray-100 min-h-screen">
       <h1 className="text-2xl font-bold text-blue-600 mb-6">View Records</h1>
       <div className="flex flex-wrap justify-center gap-6">
@@ -48,6 +55,7 @@ const ViewRecords = () => {
         ))}
       </div>
     </div>
+    </main>
   );
 };
 

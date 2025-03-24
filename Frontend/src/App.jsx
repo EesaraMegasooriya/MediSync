@@ -8,6 +8,7 @@ import {
   Routes,
 } from "react-router-dom";
 import HealthRoute from './components/HealthRecords/HealthRoute'
+import Footer from './components/Footer'
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/records/*" element={<HealthRoute />} />
       </Routes>
+      <Footer />
     </Router>
   )
 }
