@@ -30,6 +30,8 @@ function Login() {
         localStorage.setItem('token', data.token);
         localStorage.setItem('username', data.username);
         localStorage.setItem('profilePicture', data.profilePicture);
+        localStorage.setItem('userId', data.user._id); // in login response
+
         
         
         // Success alert
