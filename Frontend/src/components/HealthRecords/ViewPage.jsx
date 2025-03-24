@@ -48,7 +48,7 @@ const ViewRecords = () => {
     
     <main id="main" className="main">
     <div className="p-8 bg-gray-100 min-h-screen">
-      <h1 className="text-2xl font-bold text-blue-600 mb-6">View Records</h1>
+      <h1 className="text-2xl font-bold text-blue-600 mb-6 mt-20">View Records</h1>
       <div className="flex flex-wrap justify-center gap-6">
         {records.map((record, index) => (
           <ReportCard key={index} {...record} />

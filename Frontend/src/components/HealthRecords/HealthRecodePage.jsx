@@ -18,8 +18,8 @@ const HealthRecords = () => {
   };
 
   return (
-    <div className="bg-gradient-to-r from-blue-100 to-white min-h-screen p-6">
-      <h1 className="text-3xl font-bold text-blue-600">Health Records</h1>
+    <div className="bg-gradient-to-r from-blue-100 to-white min-h-screen p-6 ">
+      <h1 className="text-3xl font-bold text-blue-600 mt-20">Health Records</h1>
       <div className="flex flex-col md:flex-row justify-between items-center mt-4">
         <form onSubmit={handleSearch} className="flex w-full justify-space-between md:w-1/2 mb-4 md:mb-0">
           <div className="relative w-full">
