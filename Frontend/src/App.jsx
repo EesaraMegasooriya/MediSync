@@ -3,7 +3,9 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Im
 import Header from './components/Header';
 import Home from './components/Home';
 // import ChatBot from './components/ChatBot/ChatBot';
-// import Tracker from './components/Medication/Tracker';
+import Tracker from './components/MediTracker/Tracker';
+import AddPrescriptions from './components/MediTracker/AddPrescriptions';
+
 import Login from './components/User/Login';
 import Register from './components/User/Register';
 import Profile from './components/User/Profile';
@@ -25,6 +27,10 @@ function App() {
         <Route path="/login" element={<Login />} /> {/* Login route */}
         <Route path="/register" element={<Register />} /> {/* Register route */}
         <Route path="/profile" element={<Profile />} /> {/* Profile route */}
+        <Route path="/tracker" element={<Tracker />} /> {/* Tracker route */}
+        <Route path="/add-prescriptions" element={<AddPrescriptions />} /> {/* AddPrescriptions route */}
+        {/* <Route path="/chatbot" element={<ChatBot />} /> ChatBot route */}
+        
         
         
       </Routes>

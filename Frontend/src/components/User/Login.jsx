@@ -28,6 +28,9 @@ function Login() {
       if (response.status === 200) {
         // Store JWT token in localStorage
         localStorage.setItem('token', data.token);
+        localStorage.setItem('username', data.username);
+        localStorage.setItem('profilePicture', data.profilePicture);
+        
         
         // Success alert
         Swal.fire({

@@ -10,8 +10,25 @@ function Profile() {
     navigate('/login'); // Redirect to login page
   };
 
+
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good Morning';
+    if (hour < 18) return 'Good Afternoon';
+    return 'Good Evening';
+  };
+  const username = localStorage.getItem('username');
+  
+  const greeting = `${getGreeting()}, ${username}`;
+  
   // Check if the user is logged in by checking for the token in localStorage
   const isLoggedIn = localStorage.getItem('token');
+  const profilePicture = localStorage.getItem('profilePicture');
+  
+const profilePicUrl = profilePicture
+  ? `http://localhost:5001/uploads/${profilePicture}`
+  : '/default-profile.png'; // Put default image in your public folder
 
   return (
     <div>
@@ -95,9 +112,10 @@ function Profile() {
             <div className="flex flex-col justify-center items-center ">
               {/* Profile Picture */}
               <div className="">
-                <img src={ProfilePic} alt="" className='rounded-full w-40'  />
+                <img src={profilePicUrl} alt="" className='rounded-full w-40'  />
               </div>
-              <div className="font-bold pt-5">Good Morning Shamila</div>
+              <div className="font-bold pt-5">{greeting}</div>
+              
               <div className="text-center">View and update your health profile anytime.</div>
               
             </div>
