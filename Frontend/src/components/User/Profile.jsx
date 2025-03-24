@@ -98,10 +98,18 @@ const getBmiAdvice = (bmi) => {
   
 
 
-  const handleLogout = () => {
-    localStorage.removeItem('token'); // Clear the token
-    navigate('/login'); // Redirect to login page
-  };
+const handleLogout = () => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('username');
+  localStorage.removeItem('profilePicture');
+  localStorage.removeItem('userId');
+
+  // 👇 Notify Header and other listeners to update immediately
+  window.dispatchEvent(new Event('authChange'));
+
+  navigate('/login');
+};
+
 
   const [editMode, setEditMode] = useState(false);
   const [name, setName] = useState('');
@@ -202,9 +210,6 @@ const handleSave = async () => {
 };
 
 
-
-
-
   const getGreeting = () => {
     const hour = new Date().getHours();
     if (hour < 12) return 'Good Morning';
@@ -219,9 +224,11 @@ const handleSave = async () => {
   const isLoggedIn = localStorage.getItem('token');
   const profilePicture = localStorage.getItem('profilePicture');
   
-const profilePicUrl = profilePicture
-  ? `http://localhost:5001/uploads/${profilePicture}`
-  : '/default-profile.png'; // Put default image in your public folder
+  const profilePicUrl =
+  profilePicture && profilePicture !== 'undefined' && profilePicture !== 'null' && profilePicture.trim() !== ''
+    ? `http://localhost:5001/uploads/${profilePicture}`
+    : '/default-profile.png'; // ✅ Path to your default image in `public/`
+
 
   return (
     <div>

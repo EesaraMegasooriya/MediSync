@@ -3,16 +3,15 @@ import Logo from '../assets/Logo.png';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [token, setToken] = useState(localStorage.getItem('token'));
+  const [username, setUsername] = useState(localStorage.getItem('username'));
+  const [profilePicture, setProfilePicture] = useState(localStorage.getItem('profilePicture'));
 
-  const token = localStorage.getItem('token');
-const username = localStorage.getItem('username');
-const profilePicture = localStorage.getItem('profilePicture');
-
-const isLoggedIn = !!token;
-const profilePicUrl = profilePicture
-  ? `http://localhost:5001/uploads/${profilePicture}`
-  : null;
-
+  const isLoggedIn = !!token;
+  const profilePicUrl =
+    profilePicture && profilePicture !== 'undefined' && profilePicture !== 'null' && profilePicture.trim() !== ''
+      ? `http://localhost:5001/uploads/${profilePicture}`
+      : '/default-profile.png'; // Make sure this exists in public folder
 
   const toggleMenu = () => {
     setIsMenuOpen((prev) => !prev);
@@ -22,16 +21,39 @@ const profilePicUrl = profilePicture
     setIsMenuOpen(false);
   };
 
+  // Sync auth state on login/logout (custom event + cross-tab support)
   useEffect(() => {
+    const syncAuth = () => {
+      setToken(localStorage.getItem('token'));
+      setUsername(localStorage.getItem('username'));
+      setProfilePicture(localStorage.getItem('profilePicture'));
+    };
+
+    window.addEventListener('authChange', syncAuth);
+    window.addEventListener('storage', syncAuth);
+
+    return () => {
+      window.removeEventListener('authChange', syncAuth);
+      window.removeEventListener('storage', syncAuth);
+    };
+  }, []);
+
+  // Lock scroll on mobile menu open
+  useEffect(() => {
+    const originalOverflow = window.getComputedStyle(document.body).overflow;
+
     if (isMenuOpen) {
       document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = 'auto';
+      document.body.style.overflow = originalOverflow || 'auto';
     }
+
     return () => {
-      document.body.style.overflow = 'auto';
+      document.body.style.overflow = originalOverflow || 'auto';
     };
   }, [isMenuOpen]);
+  
+  
 
   return (
     <header className="bg-white text-black px-4 py-3 fixed w-full shadow-md z-50 top-0 left-0">
