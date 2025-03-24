@@ -9,8 +9,7 @@ const MedicalRecordForm = () => {
     diagnosisDate: '',
     symptoms: '',
     diagnosedBy: '',
-    currentStatus: '',
-    followUpDate: '',
+    DoctorsNote: '',
     hospitalName: '',
     level: '',
     labTestResult: '',
@@ -127,23 +126,15 @@ const MedicalRecordForm = () => {
           <div className="relative">
             <input
               type="text"
-              name="currentStatus"
+              name="doctorsNote"
               value={formData.currentStatus}
               onChange={handleInputChange}
-              placeholder="Current Status"
+              placeholder="Doctor Note"
               className="border p-2 rounded w-full"
             />
           </div>
 
-          <div className="relative">
-            <input
-              type="date"
-              name="followUpDate"
-              value={formData.followUpDate}
-              onChange={handleInputChange}
-              className="border p-2 rounded w-full"
-            />
-          </div>
+          
 
           <div className="relative">
             <input

@@ -151,7 +151,7 @@ const AddRecords = () => {
               className="border p-2 rounded w-full"
             ></textarea>
           </div>
-          <button type="submit" className="bg-blue-500 text-white py-2 rounded col-span-2 hover:bg-blue-600" >
+          <button type="submit" className="bg-blue-500 text-white py-2 rounded col-span-2 hover:bg-blue-500" >
             Save
           </button>
         </form>
