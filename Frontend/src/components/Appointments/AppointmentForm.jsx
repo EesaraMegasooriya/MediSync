@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import AppointmentImage from "../../assets/book app.jpg";
 
 const API_URL = "http://localhost:5001/api/appointments"; // Update based on your backend URL
 
@@ -178,6 +179,13 @@ const AppointmentForm = () => {
             {"Back to Home"}         
             </button>
         </form>
+          <div className="flex justify-center mt-4">
+                  <img
+                    src={AppointmentImage}
+                    alt="Appointment"
+                    className="w-[500px] h-[400px] object-cover rounded-lg shadow-lg"
+                  />
+                </div>
       </div>
     </section>
   );

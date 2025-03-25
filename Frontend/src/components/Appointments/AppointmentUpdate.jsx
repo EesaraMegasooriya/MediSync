@@ -69,9 +69,7 @@ const AppointmentUpdate = () => {
   return (
     <section className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="bg-white p-6 w-full max-w-lg mx-auto rounded-lg shadow-lg">
-        <h2 className="text-2xl font-semibold text-center mb-4 text-gray-700">
-          Update Appointment
-        </h2>
+        <h2 className="text-2xl font-semibold text-center mb-4 text-gray-700"> Update Appointment</h2>
 
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
