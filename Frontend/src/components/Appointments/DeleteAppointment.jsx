@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const DeleteAppointment = () => {
-  const { id } = useParams(); // Get appointment ID from URL params
+  const { id } = useParams();
   const [appointment, setAppointment] = useState(null);
-  const [isDeleted, setIsDeleted] = useState(false);
   const navigate = useNavigate();
 
   // Fetch appointment details before deletion
@@ -36,17 +36,27 @@ const DeleteAppointment = () => {
         throw new Error("Failed to delete appointment");
       }
 
-      setIsDeleted(true);
-      setTimeout(() => {
-        navigate("/appointmentlist"); // Redirect to appointment list after deletion
-      }, 1500);
+      // Show success alert
+      Swal.fire({
+        icon: "success",
+        title: "Appointment Deleted!",
+        text: `The appointment with Dr. ${appointment.doctorName} on ${appointment.date} at ${appointment.time} has been successfully deleted.`,
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "OK",
+      }).then(() => {
+        navigate("/appointmentlist"); // Redirect to appointment list after confirmation
+      });
     } catch (error) {
-      console.error("Error deleting appointment:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Deletion Failed",
+        text: "Could not delete the appointment. Please try again later.",
+      });
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#F1F5FE] p-6">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-[#F1F5FE] p-6 mt-20">
       <h1 className="text-3xl font-bold text-black mb-4">Delete Appointment</h1>
 
       {appointment ? (
@@ -59,26 +69,18 @@ const DeleteAppointment = () => {
           </p>
 
           <div className="flex flex-col gap-4 w-[300px]">
-            {isDeleted ? (
-              <div className="bg-green-500 text-white px-6 py-3 rounded-xl text-lg shadow-md text-center">
-                Appointment deleted successfully!
-              </div>
-            ) : (
-              <>
-                <button
-                  className="bg-red-600 text-white px-6 py-3 rounded-xl text-lg shadow-md hover:opacity-90 transition"
-                  onClick={handleDelete}
-                >
-                  Yes, Delete
-                </button>
-                <button
-                  className="bg-gray-400 text-white px-6 py-3 rounded-xl text-lg shadow-md hover:opacity-90 transition"
-                  onClick={() => navigate("/appointmentlist")}
-                >
-                  Cancel
-                </button>
-              </>
-            )}
+            <button
+              className="bg-red-600 text-white px-6 py-3 rounded-xl text-lg shadow-md hover:opacity-90 transition"
+              onClick={handleDelete}
+            >
+              Yes, Delete
+            </button>
+            <button
+              className="bg-gray-400 text-white px-6 py-3 rounded-xl text-lg shadow-md hover:opacity-90 transition"
+              onClick={() => navigate("/appointmentlist")}
+            >
+              Cancel
+            </button>
           </div>
         </>
       ) : (

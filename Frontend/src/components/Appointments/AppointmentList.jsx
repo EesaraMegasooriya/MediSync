@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
-import { FaPlus, FaEdit, FaTrash, FaFilePdf, FaSearch } from "react-icons/fa";
+import { FaPlus, FaEdit, FaTrash, FaFilePdf, FaFileCsv, FaSearch } from "react-icons/fa";
 
-const API_URL = "http://localhost:5001/api/appointments/"; 
+const API_URL = "http://localhost:5001/api/appointments/";
 
 const AppointmentList = () => {
   const navigate = useNavigate();
@@ -83,9 +83,34 @@ const AppointmentList = () => {
     doc.save("Appointment_Report.pdf");
   };
 
+  // Generate CSV Report
+  const generateCSV = () => {
+    if (filteredAppointments.length === 0) {
+      alert("No matching appointments to generate a report.");
+      return;
+    }
+
+    const headers = ["Email", "Doctor", "Date", "Day", "Time", "Location", "Note"];
+    const csvRows = [
+      headers.join(","), // Convert headers to CSV format
+      ...filteredAppointments.map((appointment) =>
+        [appointment.email, appointment.doctorName, appointment.date, appointment.day, appointment.time, appointment.location, appointment.note].join(",")
+      ),
+    ];
+
+    const csvString = csvRows.join("\n");
+    const blob = new Blob([csvString], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "Appointment_Report.csv";
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="container mx-auto p-6">
-      <h2 className="text-3xl font-bold text-center mb-6">Appointments List</h2>
+      <h2 className="text-3xl font-bold text-center mb-6 mt-20">Appointments List</h2>
 
       {error && <p className="text-center text-red-600">{error}</p>}
 
@@ -130,25 +155,27 @@ const AppointmentList = () => {
                   <tr key={appointment._id} className="border hover:bg-gray-100">
                     <td className="border p-2">{appointment.doctorName}</td>
                     <td className="border p-2">
-                      {new Date(appointment.date).toLocaleDateString('en-CA')} {/* Format as YYYY-MM-DD */}
+                      {new Date(appointment.date).toLocaleDateString("en-CA")}
                     </td>
                     <td className="border p-2">{appointment.day}</td>
                     <td className="border p-2">{appointment.time}</td>
                     <td className="border p-2">{appointment.location}</td>
                     <td className="border p-2 flex space-x-2">
-                      <button
-                        className="bg-yellow-500 text-white p-2 rounded hover:bg-yellow-600"
-                        onClick={() => navigate(`/appointmentupdate/${appointment._id}`)}
-                      >
-                        <FaEdit />
-                      </button>
-                      <button
-                        className="bg-red-500 text-white p-2 rounded hover:bg-red-600"
-                        onClick={() => handleDelete(appointment._id)}
-                      >
-                        <FaTrash />
-                      </button>
-                    </td>
+  <button
+    className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+    onClick={() => navigate(`/appointmentupdate/${appointment._id}`)}
+  >
+    <FaEdit />
+  </button>
+
+  <button
+    className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+    onClick={() => handleDelete(appointment._id)}
+  >
+    <FaTrash />
+  </button>
+</td>
+
                   </tr>
                 ))
               ) : (
@@ -163,12 +190,19 @@ const AppointmentList = () => {
         </div>
       )}
 
-      <div className="text-center mt-4">
+      <div className="text-center mt-4 flex justify-center space-x-4">
         <button
           onClick={generatePDF}
-          className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center justify-center hover:bg-green-700 transition"
+          className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-green-700 transition"
         >
-          <FaFilePdf className="mr-2" /> Generate Report
+          <FaFilePdf className="mr-2" /> Download PDF Report
+        </button>
+
+        <button
+          onClick={generateCSV}
+          className="bg-orange-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-orange-700 transition"
+        >
+          <FaFileCsv className="mr-2" /> Download CSV Report
         </button>
       </div>
     </div>

@@ -1,38 +1,36 @@
-import React, { useState, useEffect } from "react";
-import GenerateReport from "./GenerateReport";
+const generatePDF = () => {
+  if (!filteredAppointments || filteredAppointments.length === 0) {
+    alert("No matching appointments to generate a report.");
+    return;
+  }
 
-const AppointmentList = () => {
-  const [appointments, setAppointments] = useState([]);
+  console.log("Generating PDF with appointments:", filteredAppointments);
 
-  useEffect(() => {
-    const fetchAppointments = async () => {
-      try {
-        const response = await fetch("http://localhost:5001/api/appointments"); // Replace with your backend URL
-        if (!response.ok) {
-          throw new Error("Failed to fetch appointments");
-        }
-        const data = await response.json();
-        setAppointments(data); // Set the fetched data in state
-      } catch (error) {
-        console.error("Error fetching appointments:", error);
-      }
-    };
+  const doc = new jsPDF();
+  doc.text("Appointment Report", 20, 10);
 
-    fetchAppointments();
-  }, []); // Run once when the component mounts
+  const tableColumn = ["Email", "Doctor", "Date", "Day", "Time", "Location", "Note"];
+  const tableRows = [];
 
-  return (
-    <div>
-      <h1 className="text-center text-2xl font-semibold">Appointment List</h1>
-      
-      {/* Show GenerateReport button only if there are appointments */}
-      {appointments.length > 0 ? (
-        <GenerateReport appointments={appointments} />
-      ) : (
-        <p>No appointments available to generate a report.</p>
-      )}
-    </div>
-  );
+  filteredAppointments.forEach((appointment) => {
+    tableRows.push([
+      appointment.email || "N/A",
+      appointment.doctorName || "N/A",
+      new Date(appointment.date).toLocaleDateString("en-CA"), // Format Date
+      appointment.day || "N/A",
+      appointment.time || "N/A",
+      appointment.location || "N/A",
+      appointment.note || "N/A",
+    ]);
+  });
+
+  doc.autoTable({
+    head: [tableColumn],
+    body: tableRows,
+    startY: 20,
+    styles: { fontSize: 10 },
+    theme: "grid",
+  });
+
+  doc.save("Appointment_Report.pdf");
 };
-
-export default AppointmentList;

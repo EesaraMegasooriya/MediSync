@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react"; 
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 import AppointmentImage from "../../assets/book app.jpg";
 
 const API_URL = "http://localhost:5001/api/appointments"; // Update based on your backend URL
@@ -15,19 +16,66 @@ const AppointmentForm = () => {
     note: "",
   });
   
+  const [emailError, setEmailError] = useState(null); // Track email error
   const navigate = useNavigate();
-
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
 
+  // Email validation regex (lowercase letters, numbers, valid email format)
+  const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
+
+  useEffect(() => {
+    // Reset email error when user starts typing again
+    if (formData.email && !emailError) {
+      setEmailError(null);
+    }
+  }, [formData.email, emailError]);
+
+  // Handle input changes with validation
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    if (name === "email") {
+      // Convert email to lowercase and validate format after a brief delay
+      setFormData({ ...formData, email: value.toLowerCase() });
+    } else if (name === "date") {
+      // Convert selected date to a weekday
+      const selectedDate = new Date(value);
+      const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+      const correctDay = weekdays[selectedDate.getDay()];
+      setFormData({ ...formData, date: value, day: correctDay });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
+  // Validate email after typing stops (debounce effect)
+  const handleBlur = () => {
+    if (!emailRegex.test(formData.email)) {
+      setEmailError("Please enter a valid email address (lowercase only).");
+    } else {
+      setEmailError(null);
+    }
+  };
+
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate fields before submission
+    if (!emailRegex.test(formData.email)) {
+      return Swal.fire("Invalid Email", "Please enter a valid email address.", "error");
+    }
+    if (formData.doctorName.length < 3) {
+      return Swal.fire("Invalid Doctor Name", "Doctor's name must be at least 3 characters.", "error");
+    }
+    if (formData.location.length < 5) {
+      return Swal.fire("Invalid Location", "Location must be at least 5 characters.", "error");
+    }
+    if (formData.note.length < 5 || formData.note.length > 200) {
+      return Swal.fire("Invalid Note", "Note must be between 5 and 200 characters.", "error");
+    }
+
     setLoading(true);
-    setMessage("");
 
     try {
       const response = await fetch(API_URL, {
@@ -40,32 +88,22 @@ const AppointmentForm = () => {
 
       const data = await response.json();
       if (response.ok) {
-        setMessage("Appointment booked successfully!");
-        setFormData({
-          email: "",
-          doctorName: "",
-          date: "",
-          day: "",
-          time: "",
-          location: "",
-          note: "",
-        });
+        Swal.fire("Appointment Added!", "Your appointment has been successfully added.", "success");
+        setFormData({ email: "", doctorName: "", date: "", day: "", time: "", location: "", note: "" });
       } else {
-        setMessage(data.message || "Something went wrong");
+        Swal.fire("Oops...", data.message || "Something went wrong!", "error");
       }
     } catch (error) {
-      setMessage("Failed to connect to the server");
+      Swal.fire("Connection Error", "Failed to connect to the server.", "error");
     }
 
     setLoading(false);
   };
 
   return (
-    <section className="flex justify-center items-center min-h-screen bg-gray-100">
+    <section className="flex justify-center items-center min-h-screen bg-gray-100 mt-20">
       <div className="bg-white p-6 w-full max-w-lg mx-auto rounded-lg shadow-lg">
-        <h2 className="text-2xl font-semibold text-center mb-4 text-gray-700">Book an Appointment</h2>
-
-        {message && <p className="text-center text-red-600">{message}</p>}
+        <h2 className="text-2xl font-semibold text-center mb-4 text-gray-700">Add an Appointment</h2>
 
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
@@ -75,9 +113,13 @@ const AppointmentForm = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
+              onBlur={handleBlur} // Call handleBlur on input field blur to check email validation
               className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
               required
             />
+            {emailError && (
+              <p className="text-red-500 text-sm mt-1">{emailError}</p> // Show error message once
+            )}
           </div>
 
           <div>
@@ -114,15 +156,9 @@ const AppointmentForm = () => {
                 onChange={handleChange}
                 className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
                 required
+                disabled // Prevents user from manually selecting a wrong day
               >
-                <option value="">Select a day</option>
-                <option value="Monday">Monday</option>
-                <option value="Tuesday">Tuesday</option>
-                <option value="Wednesday">Wednesday</option>
-                <option value="Thursday">Thursday</option>
-                <option value="Friday">Friday</option>
-                <option value="Saturday">Saturday</option>
-                <option value="Sunday">Sunday</option>
+                <option value={formData.day}>{formData.day || "Select a day"}</option>
               </select>
             </div>
 
@@ -159,6 +195,7 @@ const AppointmentForm = () => {
               onChange={handleChange}
               className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
               rows="3"
+              required
             ></textarea>
           </div>
 
@@ -169,23 +206,23 @@ const AppointmentForm = () => {
           >
             {loading ? "Adding..." : "Add"}
           </button>
-          
+
           <button
             type="button"
             className="w-full bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition"
             onClick={() => navigate("/appointments")}
-
           >
-            {"Back to Home"}         
-            </button>
+            Back to Home
+          </button>
         </form>
-          <div className="flex justify-center mt-4">
-                  <img
-                    src={AppointmentImage}
-                    alt="Appointment"
-                    className="w-[500px] h-[400px] object-cover rounded-lg shadow-lg"
-                  />
-                </div>
+
+        <div className="flex justify-center mt-4">
+          <img
+            src={AppointmentImage}
+            alt="Appointment"
+            className="w-[500px] h-[400px] object-cover rounded-lg shadow-lg"
+          />
+        </div>
       </div>
     </section>
   );
