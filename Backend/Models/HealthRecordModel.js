@@ -7,7 +7,13 @@ const healthRecordSchema = new mongoose.Schema({
     },
     diagnosisDate: {
         type: Date,
-        required: true
+        required: true,
+        validate: {
+            validator: function(value) {
+                return value >= new Date().setHours(0,0,0,0);
+            },
+            message: 'Diagnosis date cannot be in the past'
+        }
     },
     symptoms: {
         type: String,
@@ -22,7 +28,15 @@ const healthRecordSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    level: String,
+    level: {
+        type: String,
+        validate: {
+            validator: function(value) {
+                return /[a-zA-Z]/.test(value);
+            },
+            message: 'Level must contain at least one letter, not just numbers'
+        }
+    },
     labTestResult: String,
     additionalNote: String,
     userId: {

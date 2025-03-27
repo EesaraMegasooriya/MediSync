@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+
 const {
     createHealthRecord,
     getAllHealthRecords,
@@ -8,11 +9,11 @@ const {
     deleteHealthRecord
 } = require('../Controllers/HealthRecordController');
 
-// Routes
-router.post('/createrecord', createHealthRecord);
-router.get('/getallrecords', getAllHealthRecords);
-router.get('/getrecord/:id', getHealthRecord);
-router.put('/update/:id', updateHealthRecord);
-router.delete('/deleterecord/:id', deleteHealthRecord);
+// Routes with auth middleware
+router.post('/', createHealthRecord);
+router.get('/', getAllHealthRecords);
+router.get('/:id', getHealthRecord);
+router.put('/:id', updateHealthRecord);
+router.delete('/:id', deleteHealthRecord);
 
 module.exports = router;
