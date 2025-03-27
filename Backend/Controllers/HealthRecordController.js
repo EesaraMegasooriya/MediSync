@@ -15,7 +15,6 @@ exports.createHealthRecord = async (req, res) => {
                 errors: { diagnosisDate: 'Diagnosis date cannot be in the past' }
             });
         }
-
         // Validate level if provided
         if (req.body.level && !/[a-zA-Z]/.test(req.body.level)) {
             return res.status(400).json({ 
@@ -43,7 +42,16 @@ exports.createHealthRecord = async (req, res) => {
 // Get all health records for a user
 exports.getAllHealthRecords = async (req, res) => {
     try {
-        const records = await HealthRecord.find({ userId: req.user._id });
+        const userId = req.params.id;
+        if (!userId) {
+            return res.status(400).json({ message: 'User ID is required' });
+        }
+
+        const records = await HealthRecord.find({ userId: userId });
+        if (!records || records.length === 0) {
+            return res.status(404).json({ message: 'No records found for this user' });
+        }
+        
         res.status(200).json(records);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -54,8 +62,7 @@ exports.getAllHealthRecords = async (req, res) => {
 exports.getHealthRecord = async (req, res) => {
     try {
         const record = await HealthRecord.findOne({
-            _id: req.params.id,
-            userId: req.user._id
+            _id: req.params.id
         });
         if (!record) {
             return res.status(404).json({ message: 'Record not found' });
@@ -86,7 +93,7 @@ exports.updateHealthRecord = async (req, res) => {
         }
 
         const updatedRecord = await HealthRecord.findOneAndUpdate(
-            { _id: req.params.id, userId: req.user?._id || '507f1f77bcf86cd799439011' },
+            { _id: req.params.id || '507f1f77bcf86cd799439011' },
             req.body,
             { new: true, runValidators: true }
         );
@@ -113,8 +120,7 @@ exports.updateHealthRecord = async (req, res) => {
 exports.deleteHealthRecord = async (req, res) => {
     try {
         const deletedRecord = await HealthRecord.findOneAndDelete({
-            _id: req.params.id,
-            userId: req.user._id
+            _id: req.params.id
         });
         if (!deletedRecord) {
             return res.status(404).json({ message: 'Record not found' });

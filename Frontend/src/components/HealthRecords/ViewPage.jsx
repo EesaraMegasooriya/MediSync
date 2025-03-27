@@ -1,30 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-const records = [
-  {
-    title: "Diabetes Report",
-    date: "April 4th",
-    level: "90 mg/dL",
-    status: "Normal",
-  },
-  {
-    title: "Fatty Liver Report",
-    date: "September 3rd",
-    level: "Normal Fatty liver",
-    status: "Normal",
-  },
-  {
-    title: "Cholesterol Report",
-    date: "October 4th",
-    level: "200 mg/dL",
-    status: "High",
-  },
-];
-
 const ReportCard = ({ title, date, level, status }) => {
-
-
   const navigate = useNavigate();
 
   return (
@@ -44,17 +21,42 @@ const ReportCard = ({ title, date, level, status }) => {
 };
 
 const ViewRecords = () => {
+  const [records, setRecords] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchRecords = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/healthrecords/getallrecords/user/507f1f77bcf86cd799439011');
+        if (!response.ok) {
+          throw new Error('Failed to fetch records');
+        }
+        const data = await response.json();
+        setRecords(data);
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+
+    fetchRecords();
+  }, []);
+
+  if (loading) return <main id="main" className="main"><div className="p-8">Loading...</div></main>;
+  if (error) return <main id="main" className="main"><div className="p-8">Error: {error}</div></main>;
+
   return (
-    
     <main id="main" className="main">
-    <div className="p-8 bg-gray-100 min-h-screen">
-      <h1 className="text-2xl font-bold text-blue-600 mb-6 mt-20">View Records</h1>
-      <div className="flex flex-wrap justify-center gap-6">
-        {records.map((record, index) => (
-          <ReportCard key={index} {...record} />
-        ))}
+      <div className="p-8 bg-gray-100 min-h-screen">
+        <h1 className="text-2xl font-bold text-blue-600 mb-6 mt-20">View Records</h1>
+        <div className="flex flex-wrap justify-center gap-6">
+          {records.map((record, index) => (
+            <ReportCard key={index} {...record} />
+          ))}
+        </div>
       </div>
-    </div>
     </main>
   );
 };

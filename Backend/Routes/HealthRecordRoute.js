@@ -10,10 +10,10 @@ const {
 } = require('../Controllers/HealthRecordController');
 
 // Routes with auth middleware
-router.post('/', createHealthRecord);
-router.get('/', getAllHealthRecords);
-router.get('/:id', getHealthRecord);
-router.put('/:id', updateHealthRecord);
-router.delete('/:id', deleteHealthRecord);
+router.post('/createrecord', createHealthRecord);
+router.get('/getallrecords/user/:id', getAllHealthRecords); // Updated route
+router.get('/getonerecord/:id', getHealthRecord);
+router.put('/updaterecord/:id', updateHealthRecord);
+router.delete('/deleterecord/:id', deleteHealthRecord);
 
 module.exports = router;

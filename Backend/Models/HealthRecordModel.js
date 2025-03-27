@@ -40,7 +40,7 @@ const healthRecordSchema = new mongoose.Schema({
     labTestResult: String,
     additionalNote: String,
     userId: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         ref: 'User',
         required: true
     }
