@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Import React Router v6 components
 import Header from './components/Header';
 import Home from './components/Home';
-// import ChatBot from './components/ChatBot/ChatBot';
+import ChatBot from './components/ChatBot';
 import Tracker from './components/MediTracker/Tracker';
 import AddPrescriptions from './components/MediTracker/AddPrescriptions';
 
@@ -29,7 +29,7 @@ function App() {
         <Route path="/profile" element={<Profile />} /> {/* Profile route */}
         <Route path="/tracker" element={<Tracker />} /> {/* Tracker route */}
         <Route path="/add-prescriptions" element={<AddPrescriptions />} /> {/* AddPrescriptions route */}
-        {/* <Route path="/chatbot" element={<ChatBot />} /> ChatBot route */}
+        <Route path="/chatbot" element={<ChatBot />} /> ChatBot route
         
         
         

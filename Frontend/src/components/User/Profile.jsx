@@ -224,7 +224,7 @@ const handleSave = async () => {
   };
   const username = localStorage.getItem('username');
   
-  const greeting = `${getGreeting()}, ${name}`;
+  const greeting = `${getGreeting()}, ${username}`;
   
   // Check if the user is logged in by checking for the token in localStorage
   const isLoggedIn = localStorage.getItem('token');
@@ -239,7 +239,7 @@ const handleSave = async () => {
   return (
     <div>
       <div className="mt-32">
-        <div className="px-52 flex w-full justify-between">
+        <div className="px-52 flex w-full justify-between gap-12">
             <div className=" ">
             <button
                 className="px-4 border-2 border-gray-500 rounded-full font-bold flex"
@@ -403,11 +403,11 @@ const handleSave = async () => {
               </div>
               <div className="font-bold pt-5">{greeting}</div>
               
-              <div className="text-center">View and update your health profile anytime.</div>
+              <div className="text-center">Please keep Complete and Up to date your profile.</div>
               <div className="pt-20 ">
           <div className="">
           <div className="font-bold text-2xl font-poppins text-center">{bmiFeedback.heading}</div>
-          <div className="text-gray-600 font-bold mt-5">Your BMI is {bmi} , {getBmiAdvice(bmi)}</div>
+          <div className="text-gray-600 font-bold mt-5 text-center">Your BMI is {bmi} , {getBmiAdvice(bmi)}</div>
           </div>
 
 
