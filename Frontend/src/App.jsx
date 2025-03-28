@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Import React Router v6 components
 import Header from './components/Header';
+import Footer from './components/Footer';
 import Home from './components/Home';
 import ChatBot from './components/ChatBot';
 import Tracker from './components/MediTracker/Tracker';
@@ -34,6 +35,7 @@ function App() {
         
         
       </Routes>
+      <Footer />
     </Router>
   );
 }
