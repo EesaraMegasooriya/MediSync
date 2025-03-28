@@ -5,10 +5,8 @@ import Home from './components/Home';
 // import ChatBot from './components/ChatBot/ChatBot';
 import Tracker from './components/MediTracker/Tracker';
 import AddPrescriptions from './components/MediTracker/AddPrescriptions';
+3
 
-import Login from './components/User/Login';
-import Register from './components/User/Register';
-import Profile from './components/User/Profile';
 import './App.css';
 
 // ScrollToTop component (optional)
@@ -24,9 +22,7 @@ function App() {
       <Header />
       <Routes> {/* React Router v6 uses Routes */}
         <Route path="/" element={<Home />} /> {/* Home route */}
-        <Route path="/login" element={<Login />} /> {/* Login route */}
-        <Route path="/register" element={<Register />} /> {/* Register route */}
-        <Route path="/profile" element={<Profile />} /> {/* Profile route */}
+
         <Route path="/tracker" element={<Tracker />} /> {/* Tracker route */}
         <Route path="/add-prescriptions" element={<AddPrescriptions />} /> {/* AddPrescriptions route */}
         {/* <Route path="/chatbot" element={<ChatBot />} /> ChatBot route */}
