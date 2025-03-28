@@ -94,10 +94,6 @@ const getBmiAdvice = (bmi) => {
 
 
 
-
-  
-
-
 const handleLogout = () => {
   localStorage.removeItem('token');
   localStorage.removeItem('username');
@@ -272,7 +268,7 @@ const handleSave = async () => {
                 onChange={(e) => {
                   const value = e.target.value;
                   setDob(value);
-                  calculateAgeFromDob(value); // ✅ Calculate and update age
+                  calculateAgeFromDob(value); // Calculate and update age
                 }}
                 disabled={!editMode}
               />
@@ -286,7 +282,7 @@ const handleSave = async () => {
                 className="w-full p-2 rounded-lg shadow-md border border-gray-300 focus:ring focus:ring-blue-300"
                 placeholder="Age"
                 value={age}
-                disabled={true} // ✅ Disable manual editing
+                disabled={true} // Disable manual editing
               />
 
 
@@ -318,7 +314,7 @@ const handleSave = async () => {
                     const valid = input.match(/^\d{0,3}(\.\d{0,1})?$/);
                     if (valid) {
                       setWeight(input);
-                      calculateBmi(input, height); // ✅ updated weight value, current height
+                      calculateBmi(input, height); // updated weight value, current height
                     }
                   }}
                   disabled={!editMode}

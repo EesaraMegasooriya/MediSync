@@ -125,7 +125,7 @@ const handleAddItem = (prescriptionIndex, field) => {
           {/* Buttons */}
           <div className="flex gap-4 mt-9">
             <button className="bg-gradient-to-r from-[#3A8EF6] to-[#6F3AFA] text-white px-4 py-2 rounded-xl font-bold hover:bg-purple-700 active:bg-purple-900 transition duration-200">
-              View Prescriptions
+              <a href='/tracker'>View Prescriptions</a>
             </button>
             <button  className="bg-gradient-to-r from-[#3A8EF6] to-[#6F3AFA] text-white px-4 py-2 rounded-xl font-bold hover:bg-purple-700 active:bg-purple-900 transition duration-200" >
               <a href='/add-prescriptions'>Add Prescriptions</a>
@@ -140,7 +140,7 @@ const handleAddItem = (prescriptionIndex, field) => {
       </div>
 
       <div className="ml-32">
-      <div className="overflow-x-auto whitespace-nowrap px-4 py-6">
+      <div className="overflow-x-auto  whitespace-nowrap px-4 py-6">
       <div className="flex gap-6 ">
         {prescriptions.map((prescription, index) => (
           <div key={index} className="flex flex-col items-center justify-center font-bold shadow-md rounded-lg p-4 text-center">
@@ -167,7 +167,7 @@ const handleAddItem = (prescriptionIndex, field) => {
 
      <div className="ml-32">
 
-     <div className="flex flex-col gap-6 w-1/4">
+     <div className="grid grid-cols-2 gap-6 ">
   {prescriptions.map((prescription, index) => (
     <div key={index} className="flex flex-col font-bold shadow-md rounded-lg p-4 w-[500px]">
       <div className="flex gap-4">

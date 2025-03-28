@@ -86,10 +86,10 @@ formData.append('username', username); // ✅ This line must exist BEFORE sendin
           <p className="mt-9 text-gray-500 font-poppins font-bold">Your health, our commitment. We care, you heal.</p>
           <div className="flex gap-4 mt-9">
             <button className="bg-gradient-to-r from-[#3A8EF6] to-[#6F3AFA] text-white px-4 py-2 rounded-xl font-bold hover:bg-purple-700 active:bg-purple-900 transition duration-200">
-              View Prescriptions
+              <a href='/tracker'>View Prescriptions</a>
             </button>
-            <button className="bg-gradient-to-r from-[#3A8EF6] to-[#6F3AFA] text-white px-4 py-2 rounded-xl font-bold hover:bg-purple-700 active:bg-purple-900 transition duration-200">
-              Add Prescriptions
+            <button  className="bg-gradient-to-r from-[#3A8EF6] to-[#6F3AFA] text-white px-4 py-2 rounded-xl font-bold hover:bg-purple-700 active:bg-purple-900 transition duration-200" >
+              <a href='/add-prescriptions'>Add Prescriptions</a>
             </button>
           </div>
         </div>
