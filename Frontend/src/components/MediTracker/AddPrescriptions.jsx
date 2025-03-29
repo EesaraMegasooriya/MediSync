@@ -3,10 +3,14 @@ import TrackImg2 from '../MediTracker/Images/Track2.png';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 
+import { useNavigate } from 'react-router-dom';
+
+
+
 function AddPrescriptions() {
 
   
-
+  const navigate = useNavigate();
   const [tips, setTips] = useState(['']);
   const [prescriptions, setPrescriptions] = useState(['']);
   const [medicationName, setMedicationName] = useState('');
