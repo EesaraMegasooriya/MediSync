@@ -41,7 +41,7 @@ const Header = () => {
             <li><a href="/" className="hover:text-blue-400 text-lg" onClick={closeMenu}>Home</a></li>
             <li><a href="/health-records" className="hover:text-blue-400 text-lg" onClick={closeMenu}>Health Records</a></li>
             <li><a href="/appointments" className="hover:text-blue-400 text-lg" onClick={closeMenu}>Appointments</a></li>
-            <li><a href="/medication-tracker" className="hover:text-blue-400 text-lg" onClick={closeMenu}>Medication Tracker</a></li>
+            <li><a href="/tracker" className="hover:text-blue-400 text-lg" onClick={closeMenu}>Medication Tracker</a></li>
             <li><a href="/about" className="hover:text-blue-400 text-lg" onClick={closeMenu}>About</a></li>
             <li><a href="/profile" className="hover:text-blue-400 text-lg" onClick={closeMenu}>Profile</a></li>
           </ul>

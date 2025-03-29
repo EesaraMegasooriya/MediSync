@@ -60,7 +60,9 @@ formData.append('username', username); // ✅ This line must exist BEFORE sendin
 
     try {
       const res = await axios.post('http://localhost:5001/api/prescriptions', formData);
-      Swal.fire('Success!', res.data.message, 'success');
+        Swal.fire('Success!', res.data.message, 'success').then(() => {
+            navigate('/tracker'); // ✅ Navigates after the user confirms success
+        });
     } catch (err) {
       console.error(err);
       Swal.fire('Error!', 'Failed to add prescription.', 'error');
@@ -86,7 +88,7 @@ formData.append('username', username); // ✅ This line must exist BEFORE sendin
           <p className="mt-9 text-gray-500 font-poppins font-bold">Your health, our commitment. We care, you heal.</p>
           <div className="flex gap-4 mt-9">
             <button className="bg-gradient-to-r from-[#3A8EF6] to-[#6F3AFA] text-white px-4 py-2 rounded-xl font-bold hover:bg-purple-700 active:bg-purple-900 transition duration-200">
-              View Prescriptions
+              <a href='/tracker'>View Prescriptions</a>
             </button>
             <button className="bg-gradient-to-r from-[#3A8EF6] to-[#6F3AFA] text-white px-4 py-2 rounded-xl font-bold hover:bg-purple-700 active:bg-purple-900 transition duration-200">
               Add Prescriptions
@@ -199,7 +201,7 @@ formData.append('username', username); // ✅ This line must exist BEFORE sendin
             onClick={handleSubmit}
             className="bg-gradient-to-r from-[#3A8EF6] to-[#6F3AFA] text-white px-4 py-2 rounded-xl font-bold hover:bg-purple-700 active:bg-purple-900 transition duration-200"
           >
-            Add Prescription
+            Save
           </button>
           <button className="bg-gradient-to-r from-[#3A8EF6] to-[#6F3AFA] text-white px-4 py-2 rounded-xl font-bold hover:bg-purple-700 active:bg-purple-900 transition duration-200">
             Cancel

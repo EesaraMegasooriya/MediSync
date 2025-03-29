@@ -162,12 +162,12 @@ const handleAddItem = (prescriptionIndex, field) => {
     </div>
       </div>
 
-        <div className="text-3xl font-bold ml-32 mt-20 mb-5">View Recent Medics </div>
+        <div className="text-3xl font-bold ml-32 mt-20 mb-5">View Recent Prescriptions </div>
 
 
      <div className="ml-32">
 
-     <div className="flex flex-col gap-6 w-1/4">
+     <div className="grid grid-cols-2 gap-6 ">
   {prescriptions.map((prescription, index) => (
     <div key={index} className="flex flex-col font-bold shadow-md rounded-lg p-4 w-[500px]">
       <div className="flex gap-4">
@@ -203,7 +203,7 @@ const handleAddItem = (prescriptionIndex, field) => {
               </button>
             ) : (
               <button
-                className="bg-yellow-500 text-white px-3 py-1 rounded-xl font-bold hover:bg-yellow-700"
+                className="bg-blue-500 text-white px-3 py-1 rounded-xl font-bold hover:bg-yellow-700"
                 onClick={() => handleEdit(index)}
               >
                 Edit
@@ -296,10 +296,7 @@ const handleAddItem = (prescriptionIndex, field) => {
   </div>
 </div>
 
-    
-
-         
-         
+ 
         </div>
       </div>
     </div>
