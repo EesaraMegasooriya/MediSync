@@ -5,7 +5,7 @@ import Home from './components/Home';
 // import ChatBot from './components/ChatBot/ChatBot';
 import Tracker from './components/MediTracker/Tracker';
 import AddPrescriptions from './components/MediTracker/AddPrescriptions';
-3
+import Footer from './components/Footer'
 
 import './App.css';
 
@@ -30,6 +30,7 @@ function App() {
         
         
       </Routes>
+      <Footer/>
     </Router>
   );
 }
