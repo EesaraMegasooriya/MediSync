@@ -1,22 +1,32 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const MedicalRecordForm = () => {
+  const location = useLocation();
+  const recordData = location.state?.record || {};
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showUpdateAlert, setShowUpdateAlert] = useState(false);
   const [formData, setFormData] = useState({
-    diseaseName: '',
-    diagnosisDate: '',
-    symptoms: '',
-    diagnosedBy: '',
-    DoctorsNote: '',
-    hospitalName: '',
-    level: '',
-    labTestResult: '',
-    additionalNote: ''
+    diseaseName: recordData.diseaseName || '',
+    diagnosisDate: recordData.diagnosisDate || '',
+    symptoms: recordData.symptoms || '',
+    diagnosedBy: recordData.diagnosedBy || '',
+    doctorsNote: recordData.doctorsNote || '',
+    hospitalName: recordData.hospitalName || '',
+    level: recordData.level || '',
+    labTestResult: recordData.labTestResult || '',
+    additionalNote: recordData.additionalNote || ''
   });
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  const [recordId, setRecordId] = useState(null);
+
+  useEffect(() => {
+    if (location.state?.record?._id) {
+      setRecordId(location.state.record._id);
+      console.log(location.state.record._id);
+    }
+  }, [location]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -53,17 +63,58 @@ const MedicalRecordForm = () => {
     setShowDeleteConfirm(false);
   };
 
-  const deleteRecord = () => {
-    // Add your delete logic here
-    navigate("/records");
-    setShowDeleteConfirm(false);
+  const deleteRecord = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/healthrecords/deleterecord/${recordId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.message || 'Failed to delete record');
+      }
+
+      // Navigate back to records page after successful deletion
+      navigate("/records");
+      setShowDeleteConfirm(false);
+    } catch (error) {
+      console.error('Error deleting record:', error);
+      alert(error.message || 'Failed to delete record');
+      setShowDeleteConfirm(false);
+    }
   };
 
-  const handleUpdate = (e) => {
+  const handleUpdate = async (e) => {
     e.preventDefault();
     if (validateForm()) {
-      // Add your update logic here
-      setShowUpdateAlert(true);
+      try {
+        const response = await fetch(`http://localhost:5000/api/healthrecords/updaterecord/${recordId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify(formData)
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || 'Failed to update record');
+        }
+
+        setShowUpdateAlert(true);
+        setTimeout(() => {
+          navigate('/records');
+        }, 2000);
+      } catch (error) {
+        console.error('Error updating record:', error);
+        // You might want to show an error alert to the user here
+        alert(error.message || 'Failed to update record');
+      }
     }
   };
 
@@ -127,7 +178,7 @@ const MedicalRecordForm = () => {
             <input
               type="text"
               name="doctorsNote"
-              value={formData.currentStatus}
+              value={formData.doctorsNote}
               onChange={handleInputChange}
               placeholder="Doctor Note"
               className="border p-2 rounded w-full"

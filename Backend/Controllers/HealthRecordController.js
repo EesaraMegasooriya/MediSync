@@ -76,26 +76,11 @@ exports.getHealthRecord = async (req, res) => {
 // Update health record
 exports.updateHealthRecord = async (req, res) => {
     try {
-        // Validate date if it's being updated
-        if (req.body.diagnosisDate && new Date(req.body.diagnosisDate) < new Date().setHours(0,0,0,0)) {
-            return res.status(400).json({ 
-                message: 'Validation failed',
-                errors: { diagnosisDate: 'Diagnosis date cannot be in the past' }
-            });
-        }
-
         // Validate level if it's being updated
-        if (req.body.level && !/[a-zA-Z]/.test(req.body.level)) {
-            return res.status(400).json({ 
-                message: 'Validation failed',
-                errors: { level: 'Level must contain at least one letter, not just numbers' }
-            });
-        }
-
         const updatedRecord = await HealthRecord.findOneAndUpdate(
-            { _id: req.params.id || '507f1f77bcf86cd799439011' },
+            { _id: req.params.id  },
             req.body,
-            { new: true, runValidators: true }
+            { new: true }
         );
         
         if (!updatedRecord) {
@@ -103,15 +88,7 @@ exports.updateHealthRecord = async (req, res) => {
         }
         res.status(200).json(updatedRecord);
     } catch (error) {
-        if (error.name === 'ValidationError') {
-            return res.status(400).json({
-                message: 'Validation failed',
-                errors: Object.keys(error.errors).reduce((acc, key) => {
-                    acc[key] = error.errors[key].message;
-                    return acc;
-                }, {})
-            });
-        }
+        
         res.status(400).json({ message: error.message });
     }
 };

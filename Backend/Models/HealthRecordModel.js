@@ -8,12 +8,7 @@ const healthRecordSchema = new mongoose.Schema({
     diagnosisDate: {
         type: Date,
         required: true,
-        validate: {
-            validator: function(value) {
-                return value >= new Date().setHours(0,0,0,0);
-            },
-            message: 'Diagnosis date cannot be in the past'
-        }
+        
     },
     symptoms: {
         type: String,
