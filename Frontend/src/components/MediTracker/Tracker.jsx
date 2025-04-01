@@ -130,6 +130,9 @@ const handleAddItem = (prescriptionIndex, field) => {
             <button  className="bg-gradient-to-r from-[#3A8EF6] to-[#6F3AFA] text-white px-4 py-2 rounded-xl font-bold hover:bg-purple-700 active:bg-purple-900 transition duration-200" >
               <a href='/add-prescriptions'>Add Prescriptions</a>
             </button>
+            <button  className="bg-gradient-to-r from-[#3A8EF6] to-[#6F3AFA] text-white px-4 py-2 rounded-xl font-bold hover:bg-purple-700 active:bg-purple-900 transition duration-200" >
+              <a href='/add-prescriptions'>Report</a>
+            </button>
           </div>
         </div>
 
