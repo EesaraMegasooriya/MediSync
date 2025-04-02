@@ -39,9 +39,10 @@ const HomeAppointment = () => {
       </div>
 
       <div className="flex items-center gap-4 mb-6">
-        <h1 className="text-4xl font-bold text-[#2979FF] flex items-center gap-2">
-          APPOINTMENT AND REMINDERS <span role="img" aria-label="health"></span>
-        </h1>
+      <h1 className="text-5xl font-extrabold text-transparent bg-gradient-to-r from-blue-700 to-purple-700 bg-clip-text flex items-center gap-2">
+  APPOINTMENT AND REMINDERS <span role="img" aria-label="health"></span>
+</h1>
+
         <img
           src={HealthCare}
           alt="Healthcare"

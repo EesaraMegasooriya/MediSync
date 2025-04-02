@@ -8,6 +8,7 @@ import Header from './components/Header';
 import Home from './components/Home';
 import './App.css';
 import React from 'react';
+import AboutUs from './components/AboutUs/AboutUs';
 
 const ScrollToTop = () => {
   window.scrollTo(0, 0);
@@ -26,6 +27,7 @@ function App() {
         <Route path="/appointmentlist" element={<AppointmentList />} /> {/* AppointmentList route */}
         <Route path="/appointmentupdate/:id" element={<AppointmentUpdate />} /> {/* AppointmentUpdate route */}
         <Route path="/deleteappointment" element={<DeleteAppointment />} /> {/* DeleteAppointment route */}
+        <Route path="/about" element={<AboutUs />} />
       </Routes>
     </Router>
   );
