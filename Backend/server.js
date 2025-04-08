@@ -9,6 +9,10 @@ dotenv.config(); // Load environment variables
 //Appoinments
 const appoinmentRoutes = require('./Routes/AppointmentRoutes');
 
+//email reminder
+require('./reminderJob');
+
+
 
 const app = express();
 const PORT = process.env.PORT || 5001;

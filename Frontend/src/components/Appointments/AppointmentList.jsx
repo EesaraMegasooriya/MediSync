@@ -32,12 +32,15 @@ const AppointmentList = () => {
     fetchAppointments();
   }, []);
 
-  // Filter appointments based on search
-  const filteredAppointments = appointments.filter(
-    (appointment) =>
-      appointment.doctorName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      appointment.location.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Filter upcoming appointments based on search
+const filteredAppointments = appointments
+.filter((a) => new Date(a.date) >= new Date()) // Show only upcoming ones
+.filter(
+  (appointment) =>
+    appointment.doctorName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    appointment.location.toLowerCase().includes(searchTerm.toLowerCase())
+);
+
 
   // Delete appointment
   const handleDelete = async (id) => {
@@ -64,7 +67,7 @@ const AppointmentList = () => {
     const doc = new jsPDF();
     doc.text("Appointment Report", 20, 10);
 
-    const tableColumn = ["Email", "Doctor", "Date", "Day", "Time", "Location", "Note"];
+    const tableColumn = ["Email", "Doctor", "Date", "Day", "Time", "Location", "Note", "Reminder"];
     const tableRows = [];
 
     filteredAppointments.forEach((appointment) => {
@@ -76,6 +79,7 @@ const AppointmentList = () => {
         appointment.time,
         appointment.location,
         appointment.note,
+        appointment.reminder_sent ? "Sent" : "Pending",
       ]);
     });
 
@@ -90,11 +94,20 @@ const AppointmentList = () => {
       return;
     }
 
-    const headers = ["Email", "Doctor", "Date", "Day", "Time", "Location", "Note"];
+    const headers = ["Email", "Doctor", "Date", "Day", "Time", "Location", "Note", "Reminder"];
     const csvRows = [
-      headers.join(","), // Convert headers to CSV format
+      headers.join(","),
       ...filteredAppointments.map((appointment) =>
-        [appointment.email, appointment.doctorName, appointment.date, appointment.day, appointment.time, appointment.location, appointment.note].join(",")
+        [
+          appointment.email,
+          appointment.doctorName,
+          appointment.date,
+          appointment.day,
+          appointment.time,
+          appointment.location,
+          appointment.note,
+          appointment.reminder_sent ? "Sent" : "Pending",
+        ].join(",")
       ),
     ];
 
@@ -141,11 +154,13 @@ const AppointmentList = () => {
           <table className="w-full border-collapse border border-gray-300">
             <thead>
               <tr className="bg-gray-200">
+                <th className="border p-2">Email</th>
                 <th className="border p-2">Doctor</th>
                 <th className="border p-2">Date</th>
                 <th className="border p-2">Day</th>
                 <th className="border p-2">Time</th>
                 <th className="border p-2">Location</th>
+                <th className="border p-2">Reminder</th>
                 <th className="border p-2">Actions</th>
               </tr>
             </thead>
@@ -153,6 +168,7 @@ const AppointmentList = () => {
               {filteredAppointments.length > 0 ? (
                 filteredAppointments.map((appointment) => (
                   <tr key={appointment._id} className="border hover:bg-gray-100">
+                    <td className="border p-2">{appointment.email}</td>
                     <td className="border p-2">{appointment.doctorName}</td>
                     <td className="border p-2">
                       {new Date(appointment.date).toLocaleDateString("en-CA")}
@@ -160,27 +176,32 @@ const AppointmentList = () => {
                     <td className="border p-2">{appointment.day}</td>
                     <td className="border p-2">{appointment.time}</td>
                     <td className="border p-2">{appointment.location}</td>
+                    <td className="border p-2 text-center">
+                      {appointment.reminder_sent ? (
+                        <span className="text-green-600 font-semibold">✅ Sent</span>
+                      ) : (
+                        <span className="text-orange-600 font-semibold">⏳ Pending</span>
+                      )}
+                    </td>
                     <td className="border p-2 flex space-x-2">
-  <button
-    className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
-    onClick={() => navigate(`/appointmentupdate/${appointment._id}`)}
-  >
-    <FaEdit />
-  </button>
-
-  <button
-    className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
-    onClick={() => handleDelete(appointment._id)}
-  >
-    <FaTrash />
-  </button>
-</td>
-
+                      <button
+                        className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+                        onClick={() => navigate(`/appointmentupdate/${appointment._id}`)}
+                      >
+                        <FaEdit />
+                      </button>
+                      <button
+                        className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+                        onClick={() => handleDelete(appointment._id)}
+                      >
+                        <FaTrash />
+                      </button>
+                    </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="6" className="text-center p-4 text-gray-500">
+                  <td colSpan="8" className="text-center p-4 text-gray-500">
                     No appointments found
                   </td>
                 </tr>

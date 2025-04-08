@@ -52,8 +52,12 @@ const appointmentSchema = new mongoose.Schema(
       default: "",
       trim: true,
     },
+    reminder_sent: {
+      type: Boolean,
+      default: false,
+    },
   },
-  { timestamps: true } // Auto-adds createdAt & updatedAt fields
+  { timestamps: true }
 );
 
 module.exports = mongoose.model("Appointment", appointmentSchema);
