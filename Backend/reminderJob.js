@@ -8,8 +8,8 @@ const Appointment = require("./Models/AppointmentModel"); // Adjust path if need
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: "your_email@gmail.com",         // Your Gmail
-    pass: "your_app_password",            // Use App Password if 2FA is on
+    user: "your_email@gmail.com",         // Replace with your Gmail
+    pass: "your_app_password",            // Use Gmail App Password
   },
 });
 
@@ -20,7 +20,7 @@ const sendReminders = async () => {
 
   const upcomingAppointments = await Appointment.find({
     date: { $gte: tomorrowStart, $lte: tomorrowEnd },
-    reminderSent: { $ne: true }, // Either false or undefined
+    reminder_sent: { $ne: true }, // <-- Fix here
   });
 
   for (const appt of upcomingAppointments) {
@@ -39,7 +39,7 @@ Note: ${appt.note || "No additional notes"}
 
     try {
       await transporter.sendMail(mailOptions);
-      appt.reminderSent = true;
+      appt.reminder_sent = true; // <-- Fix here
       await appt.save();
       console.log(`✅ Reminder sent to ${appt.email}`);
     } catch (err) {
