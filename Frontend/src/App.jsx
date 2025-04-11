@@ -30,7 +30,7 @@ function App() {
         <Route path="/profile" element={<Profile />} /> {/* Profile route */}
         <Route path="/tracker" element={<Tracker />} /> {/* Tracker route */}
         <Route path="/add-prescriptions" element={<AddPrescriptions />} /> {/* AddPrescriptions route */}
-        <Route path="/chatbot" element={<ChatBot />} /> ChatBot route
+        <Route path="/chatbot" element={<ChatBot />} /> 
         
         
         
