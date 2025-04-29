@@ -14,31 +14,35 @@ const AppointmentForm = () => {
     time: "",
     location: "",
     note: "",
+    sendReminders: true,
   });
-  
-  const [emailError, setEmailError] = useState(null); // Track email error
+
+  const [emailError, setEmailError] = useState(null);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [sendingReminder, setSendingReminder] = useState(false);
 
-  // Email validation regex (lowercase letters, numbers, valid email format)
   const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
 
   useEffect(() => {
-    // Reset email error when user starts typing again
-    if (formData.email && !emailError) {
+    if (formData.email && emailError) {
       setEmailError(null);
     }
   }, [formData.email, emailError]);
 
-  // Handle input changes with validation
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
 
-    if (name === "email") {
-      // Convert email to lowercase and validate format after a brief delay
+    if (type === "checkbox") {
+      setFormData({ ...formData, [name]: checked });
+      
+      // If checking the sendReminders box and we have a valid email, send a test email
+      if (name === "sendReminders" && checked && formData.email && emailRegex.test(formData.email)) {
+        sendTestEmail(formData.email);
+      }
+    } else if (name === "email") {
       setFormData({ ...formData, email: value.toLowerCase() });
     } else if (name === "date") {
-      // Convert selected date to a weekday
       const selectedDate = new Date(value);
       const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
       const correctDay = weekdays[selectedDate.getDay()];
@@ -48,20 +52,67 @@ const AppointmentForm = () => {
     }
   };
 
-  // Validate email after typing stops (debounce effect)
+  const sendTestEmail = async (email) => {
+    if (!email || !emailRegex.test(email)) {
+      Swal.fire("Invalid Email", "Please enter a valid email address to receive reminders.", "error");
+      return;
+    }
+
+    setSendingReminder(true);
+
+    try {
+      // Prepare data with current form information for a meaningful email
+      const emailData = {
+        email: email,
+        doctorName: formData.doctorName || "Your doctor",
+        date: formData.date || new Date().toISOString().split("T")[0],
+        time: formData.time || "your scheduled time",
+        location: formData.location || "our clinic",
+        note: formData.note || "No additional notes"
+      };
+      
+      const response = await fetch(`${API_URL}/test-reminder`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(emailData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        Swal.fire({
+          title: "Email Sent!",
+          text: `A test reminder has been sent to ${email}. Please check your inbox.`,
+          icon: "success",
+        });
+      } else {
+        Swal.fire("Email Failed", data.message || "Failed to send reminder email", "error");
+        // If email fails, uncheck the reminder box
+        setFormData(prev => ({ ...prev, sendReminders: false }));
+      }
+    } catch (error) {
+      console.error("Error sending test email:", error);
+      Swal.fire("Connection Error", "Failed to send email. Check your connection.", "error");
+      // If email fails, uncheck the reminder box
+      setFormData(prev => ({ ...prev, sendReminders: false }));
+    } finally {
+      setSendingReminder(false);
+    }
+  };
+
   const handleBlur = () => {
-    if (!emailRegex.test(formData.email)) {
+    if (formData.email && !emailRegex.test(formData.email)) {
       setEmailError("Please enter a valid email address (lowercase only).");
     } else {
       setEmailError(null);
     }
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate fields before submission
     if (!emailRegex.test(formData.email)) {
       return Swal.fire("Invalid Email", "Please enter a valid email address.", "error");
     }
@@ -87,13 +138,35 @@ const AppointmentForm = () => {
       });
 
       const data = await response.json();
+
       if (response.ok) {
-        Swal.fire("Appointment Added!", "Your appointment has been successfully added.", "success");
-        setFormData({ email: "", doctorName: "", date: "", day: "", time: "", location: "", note: "" });
+        Swal.fire({
+          title: "Appointment Added!",
+          text: formData.sendReminders
+            ? "Your appointment has been successfully added. We'll send you email reminders before your appointment."
+            : "Your appointment has been successfully added.",
+          icon: "success",
+        });
+
+        setFormData({
+          email: "",
+          doctorName: "",
+          date: "",
+          day: "",
+          time: "",
+          location: "",
+          note: "",
+          sendReminders: true,
+        });
+
+        setTimeout(() => {
+          navigate("/appointments");
+        }, 2000);
       } else {
         Swal.fire("Oops...", data.message || "Something went wrong!", "error");
       }
     } catch (error) {
+      console.error(error);
       Swal.fire("Connection Error", "Failed to connect to the server.", "error");
     }
 
@@ -113,12 +186,12 @@ const AppointmentForm = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              onBlur={handleBlur} // Call handleBlur on input field blur to check email validation
-              className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
+              onBlur={handleBlur}
+              className={`w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 ${emailError ? "border-red-500" : ""}`}
               required
             />
             {emailError && (
-              <p className="text-red-500 text-sm mt-1">{emailError}</p> // Show error message once
+              <p className="text-red-500 text-sm mt-1">{emailError}</p>
             )}
           </div>
 
@@ -143,7 +216,7 @@ const AppointmentForm = () => {
               onChange={handleChange}
               className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
               required
-              min={new Date().toISOString().split("T")[0]} // Set minimum date to today
+              min={new Date().toISOString().split("T")[0]}
             />
           </div>
 
@@ -154,9 +227,9 @@ const AppointmentForm = () => {
                 name="day"
                 value={formData.day}
                 onChange={handleChange}
-                className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
+                className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 bg-gray-100"
                 required
-                disabled // Prevents user from manually selecting a wrong day
+                disabled
               >
                 <option value={formData.day}>{formData.day || "Select a day"}</option>
               </select>
@@ -196,20 +269,44 @@ const AppointmentForm = () => {
               className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
               rows="3"
               required
+              minLength="5"
+              maxLength="200"
             ></textarea>
+            <div className="text-xs text-gray-500 mt-1">
+              {formData.note.length}/200 characters
+            </div>
+          </div>
+
+          <div className="flex items-center mt-2">
+            <label className="flex items-center space-x-2 text-sm text-gray-700">
+              <input
+                type="checkbox"
+                name="sendReminders"
+                checked={formData.sendReminders}
+                onChange={handleChange}
+                className="accent-blue-600 w-4 h-4"
+                disabled={sendingReminder}
+              />
+              <span>
+                {sendingReminder 
+                  ? "Sending reminder email..." 
+                  : "Send Reminder"
+                }
+              </span>
+            </label>
           </div>
 
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition"
+            className={`w-full ${loading ? "bg-gray-500" : "bg-blue-600 hover:bg-blue-700"} text-white p-2 rounded-lg transition`}
             disabled={loading}
           >
-            {loading ? "Adding..." : "Add"}
+            {loading ? "Adding..." : "Add Appointment"}
           </button>
 
           <button
             type="button"
-            className="w-full bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition"
+            className="w-full bg-gray-600 text-white p-2 rounded-lg hover:bg-gray-700 transition"
             onClick={() => navigate("/appointments")}
           >
             Back to Home
@@ -220,7 +317,7 @@ const AppointmentForm = () => {
           <img
             src={AppointmentImage}
             alt="Appointment"
-            className="w-[500px] h-[400px] object-cover rounded-lg shadow-lg"
+            className="w-full h-64 object-cover rounded-lg shadow-lg"
           />
         </div>
       </div>

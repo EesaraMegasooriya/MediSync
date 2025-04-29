@@ -1,29 +1,27 @@
-
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
-// const userRoutes = require('./Routes/UserRoute'); // Import routes
 dotenv.config(); // Load environment variables
 
-//Appoinments
-const appoinmentRoutes = require('./Routes/AppointmentRoutes');
+//Appointments
+const appointmentRoutes = require('./Routes/AppointmentRoutes');
 
-//email reminder
-require('./reminderJob');
-
-
-
+// Create Express app
 const app = express();
 const PORT = process.env.PORT || 5001;
 
 // Middleware
-app.use(cors());
+app.use(cors()); 
 app.use(express.json()); // For parsing JSON requests
 
-// UserRoutes
-// app.use('/api/users', userRoutes); // Use the user routes
-app.use('/api/appointments', appoinmentRoutes);
+// Routes
+app.use('/api/appointments', appointmentRoutes);
+
+// Simple test route
+app.get('/test', (req, res) => {
+  res.send('MediSync API is running');
+});
 
 // MongoDB connection
 mongoose

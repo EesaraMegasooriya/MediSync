@@ -33,21 +33,20 @@ const AppointmentList = () => {
   }, []);
 
   // Filter upcoming appointments based on search
-const filteredAppointments = appointments
-.filter((a) => new Date(a.date) >= new Date()) // Show only upcoming ones
-.filter(
-  (appointment) =>
-    appointment.doctorName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    appointment.location.toLowerCase().includes(searchTerm.toLowerCase())
-);
-
+  const filteredAppointments = appointments
+    .filter((a) => new Date(a.date) >= new Date()) // Show only upcoming ones
+    .filter(
+      (appointment) =>
+        appointment.doctorName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        appointment.location.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
   // Delete appointment
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this appointment?")) return;
 
     try {
-      const response = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+      const response = await fetch(`${API_URL}${id}`, { method: "DELETE" });
       if (!response.ok) throw new Error("Failed to delete appointment");
 
       setAppointments(appointments.filter((appointment) => appointment._id !== id));
@@ -57,7 +56,7 @@ const filteredAppointments = appointments
     }
   };
 
-  // Generate PDF Report
+  // Generate PDF Report - Enhanced to include email and reminder status
   const generatePDF = () => {
     if (filteredAppointments.length === 0) {
       alert("No matching appointments to generate a report.");
@@ -65,25 +64,86 @@ const filteredAppointments = appointments
     }
 
     const doc = new jsPDF();
-    doc.text("Appointment Report", 20, 10);
-
-    const tableColumn = ["Email", "Doctor", "Date", "Day", "Time", "Location", "Note", "Reminder"];
+    
+    // Add title and metadata
+    doc.setFontSize(20);
+    doc.setTextColor(0, 51, 102);
+    doc.text("Medical Appointments Report", 14, 22);
+    
+    doc.setFontSize(11);
+    doc.setTextColor(102, 102, 102);
+    doc.text(`Generated on: ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}`, 14, 30);
+    
+    // Define table columns
+    const tableColumn = ["Email", "Doctor", "Date", "Day", "Time", "Location", "Note", "Reminder Status"];
     const tableRows = [];
 
     filteredAppointments.forEach((appointment) => {
+      const formattedDate = new Date(appointment.date).toLocaleDateString();
+      
+      // Ensure note is not too long for PDF
+      const truncatedNote = appointment.note?.length > 20 
+        ? appointment.note.substring(0, 20) + "..." 
+        : appointment.note || "";
+        
+      // Determine reminder status
+      const reminderStatus = appointment.reminder_sent ? "Sent" : 
+      (appointment.sendReminders ? "Scheduled" : "Disabled");
+      
       tableRows.push([
         appointment.email,
         appointment.doctorName,
-        appointment.date,
+        formattedDate,
         appointment.day,
         appointment.time,
         appointment.location,
-        appointment.note,
-        appointment.reminder_sent ? "Sent" : "Pending",
+        truncatedNote,
+        reminderStatus
       ]);
     });
 
-    doc.autoTable({ head: [tableColumn], body: tableRows, startY: 20 });
+    // Create the table with styling
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 35,
+      styles: { fontSize: 9, cellPadding: 3 },
+      headStyles: { 
+        fillColor: [66, 139, 202],
+        textColor: 255,
+        fontStyle: 'bold'
+      },
+      alternateRowStyles: {
+        fillColor: [240, 240, 240]
+      },
+      columnStyles: {
+        0: { cellWidth: 'auto' }, // Email
+        1: { cellWidth: 'auto' }, // Doctor
+        2: { cellWidth: 'auto' }, // Date
+        3: { cellWidth: 'auto' }, // Day
+        4: { cellWidth: 'auto' }, // Time
+        5: { cellWidth: 'auto' }, // Location
+        6: { cellWidth: 'auto' }, // Note
+        7: { cellWidth: 'auto' }  // Reminder Status
+      }
+    });
+    
+    // Add footer with appointment count
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(9);
+      doc.setTextColor(150);
+      
+      // Footer text
+      const totalAppointments = `Total Appointments: ${filteredAppointments.length}`;
+      const pageInfo = `Page ${i} of ${pageCount}`;
+      
+      // Position footer elements
+      doc.text(totalAppointments, 14, doc.internal.pageSize.height - 10);
+      doc.text(pageInfo, doc.internal.pageSize.width - 45, doc.internal.pageSize.height - 10);
+    }
+    
     doc.save("Appointment_Report.pdf");
   };
 
@@ -94,30 +154,51 @@ const filteredAppointments = appointments
       return;
     }
 
-    const headers = ["Email", "Doctor", "Date", "Day", "Time", "Location", "Note", "Reminder"];
+    // Properly escape CSV fields to handle commas within fields
+    const escapeCSV = (text) => {
+      if (text === null || text === undefined) return '';
+      text = text.toString();
+      if (text.includes(',') || text.includes('\n') || text.includes('"')) {
+        return `"${text.replace(/"/g, '""')}"`;
+      }
+      return text;
+    };
+
+    const headers = ["Email", "Doctor", "Date", "Day", "Time", "Location", "Note", "Reminder Status"];
+    
     const csvRows = [
-      headers.join(","),
-      ...filteredAppointments.map((appointment) =>
-        [
-          appointment.email,
-          appointment.doctorName,
-          appointment.date,
-          appointment.day,
-          appointment.time,
-          appointment.location,
-          appointment.note,
-          appointment.reminder_sent ? "Sent" : "Pending",
-        ].join(",")
-      ),
+      headers.join(',')
     ];
+    
+    filteredAppointments.forEach(appointment => {
+      const formattedDate = new Date(appointment.date).toLocaleDateString();
+      
+      // Determine reminder status
+      const reminderStatus = appointment.reminder_sent ? "Sent" : 
+                            (appointment.sendReminders ? "Scheduled" : "Disabled");
+      
+      const row = [
+        escapeCSV(appointment.email),
+        escapeCSV(appointment.doctorName),
+        escapeCSV(formattedDate),
+        escapeCSV(appointment.day),
+        escapeCSV(appointment.time),
+        escapeCSV(appointment.location),
+        escapeCSV(appointment.note),
+        escapeCSV(reminderStatus)
+      ].join(',');
+      csvRows.push(row);
+    });
 
     const csvString = csvRows.join("\n");
-    const blob = new Blob([csvString], { type: "text/csv" });
+    const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
     a.download = "Appointment_Report.csv";
+    document.body.appendChild(a);
     a.click();
+    document.body.removeChild(a);
     window.URL.revokeObjectURL(url);
   };
 
@@ -171,16 +252,18 @@ const filteredAppointments = appointments
                     <td className="border p-2">{appointment.email}</td>
                     <td className="border p-2">{appointment.doctorName}</td>
                     <td className="border p-2">
-                      {new Date(appointment.date).toLocaleDateString("en-CA")}
+                      {new Date(appointment.date).toLocaleDateString()}
                     </td>
                     <td className="border p-2">{appointment.day}</td>
                     <td className="border p-2">{appointment.time}</td>
                     <td className="border p-2">{appointment.location}</td>
                     <td className="border p-2 text-center">
                       {appointment.reminder_sent ? (
-                        <span className="text-green-600 font-semibold">✅ Sent</span>
+                        <span className="text-blue-600 font-semibold">✉️ Sent</span>
+                      ) : appointment.sendReminders ? (
+                        <span className="text-green-600 font-semibold">✅ Scheduled</span>
                       ) : (
-                        <span className="text-orange-600 font-semibold">⏳ Pending</span>
+                        <span className="text-orange-600 font-semibold">❌ Disabled</span>
                       )}
                     </td>
                     <td className="border p-2 flex space-x-2">
@@ -191,7 +274,7 @@ const filteredAppointments = appointments
                         <FaEdit />
                       </button>
                       <button
-                        className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+                        className="bg-red-500 text-white p-2 rounded hover:bg-red-600"
                         onClick={() => handleDelete(appointment._id)}
                       >
                         <FaTrash />
@@ -215,6 +298,7 @@ const filteredAppointments = appointments
         <button
           onClick={generatePDF}
           className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-green-700 transition"
+          disabled={filteredAppointments.length === 0}
         >
           <FaFilePdf className="mr-2" /> Download PDF Report
         </button>
@@ -222,6 +306,7 @@ const filteredAppointments = appointments
         <button
           onClick={generateCSV}
           className="bg-orange-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-orange-700 transition"
+          disabled={filteredAppointments.length === 0}
         >
           <FaFileCsv className="mr-2" /> Download CSV Report
         </button>
@@ -229,5 +314,8 @@ const filteredAppointments = appointments
     </div>
   );
 };
+
+
+
 
 export default AppointmentList;
