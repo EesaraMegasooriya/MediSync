@@ -43,12 +43,28 @@ const AddRecords = () => {
 
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
-      // Add your save logic here
-      console.log('Form submitted:', formData);
-      navigate("/records/Allrecords");
+      try {
+        const response = await fetch("http://localhost:5000/api/healthrecords/createrecord", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(formData)
+        });
+  
+        if (!response.ok) {
+          throw new Error("Failed to save record");
+        }
+  
+        console.log("Record saved successfully");
+        navigate("/records/Allrecords");
+      } catch (error) {
+        console.error("Error saving record:", error);
+        alert("Failed to save record. Please try again.");
+      }
     }
   };
 
