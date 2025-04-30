@@ -63,22 +63,28 @@ const HealthRecords = () => {
         <form onSubmit={handleSearch} className="flex w-full justify-space-between md:w-1/2 mb-4 md:mb-0">
           {/* ...existing search form code... */}
         </form>
-        <div className="flex space-x-3">
-          <button 
-            className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600" 
-            onClick={() => navigate("/records/Allrecords")}
-          >
-            View All Records
-          </button>
-          <button
-            className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600"
-            onClick={() => navigate("/records/add")}
-          >
-            Add Records
-          </button>
-        </div>
-      </div>
-
+        
+<div className="flex space-x-3">
+  <button 
+    className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600" 
+    onClick={() => navigate("/records/Allrecords")}
+  >
+    View All Records
+  </button>
+  <button
+    className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600"
+    onClick={() => navigate("/records/add")}
+  >
+    Add Records
+  </button>
+<button
+  className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600"
+  onClick={() => navigate("/records/graph")}
+>
+  Show Graph
+</button>
+</div>
+    </div>
       {loading ? (
         <div className="text-center mt-8">Loading...</div>
       ) : error ? (

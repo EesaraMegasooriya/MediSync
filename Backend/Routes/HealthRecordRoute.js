@@ -6,12 +6,13 @@ const {
     getAllHealthRecords,
     getHealthRecord,
     updateHealthRecord,
-    deleteHealthRecord
+    deleteHealthRecord,
+   
 } = require('../Controllers/HealthRecordController');
 
 // Routes with auth middleware
 router.post('/createrecord', createHealthRecord);
-router.get('/getallrecords/user/:id', getAllHealthRecords); // Updated route
+router.get('/getallrecords/user/:id', getAllHealthRecords);
 router.get('/getonerecord/:id', getHealthRecord);
 router.put('/updaterecord/:id', updateHealthRecord);
 router.delete('/deleterecord/:id', deleteHealthRecord);
