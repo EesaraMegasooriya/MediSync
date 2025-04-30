@@ -148,36 +148,56 @@ const ReportCard = ({ diseaseName, diagnosisDate, level, status, hospitalName, d
     }
   };
 
-  return (
-    <div className="bg-white shadow-lg rounded-lg p-6 text-center w-72">
-      <h2 className="font-bold text-lg">{diseaseName}</h2>
-      <p className="text-gray-600">Date: {formattedDate}</p>
-      <p className="text-gray-600">Level: {level}</p>
-      <p className={`font-semibold ${status === "High" ? "text-red-500" : "text-green-500"}`}>
-        Current Status: {status || 'Normal'}
-      </p>
-      <div className="flex justify-center gap-4 mt-4">
-        <button 
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg" 
-          onClick={() => navigate("/records/update", { state: { record: { diseaseName, diagnosisDate, level, status, ...record } } })}
-        >
-          View
-        </button>
-        <button 
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-          onClick={downloadPDF}
-        >
-          Download
-        </button>
-      </div>
+ // Find and replace the ReportCard component's return statement with this:
+return (
+  <div className="bg-white shadow-lg rounded-lg p-6 text-center w-72">
+    <h2 className="font-bold text-lg">{diseaseName}</h2>
+    <p className="text-gray-600">Date: {formattedDate}</p>
+    <p className="text-gray-600">Level: {level}</p>
+    <p className={`font-semibold ${status === "High" ? "text-red-500" : "text-green-500"}`}>
+      Current Status: {status || 'Normal'}
+    </p>
+    <div className="flex justify-center gap-4 mt-4">
+      <button 
+        className="bg-blue-500 text-white px-4 py-2 rounded-lg" 
+        onClick={() => navigate("/records/update", { 
+          state: { 
+            record: {
+              diseaseName,
+              diagnosisDate,
+              level,
+              status,
+              hospitalName,
+              diagnosedBy,
+              symptoms,
+              labTestResult,
+              doctorsNote,
+              additionalNote,
+              ...record
+            }
+          }
+        })}
+      >
+        View
+      </button>
+      <button 
+        className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+        onClick={downloadPDF}
+      >
+        Download
+      </button>
     </div>
-  );
-};
+  </div>
+);
+}
 
+// search bar
 const ViewRecords = () => {
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredRecords, setFilteredRecords] = useState([]);
 
   useEffect(() => {
     const fetchRecords = async () => {
@@ -187,8 +207,11 @@ const ViewRecords = () => {
           throw new Error('Failed to fetch records');
         }
         const data = await response.json();
-        console.log(data);
-        setRecords(data);
+        const sortedRecords = data.sort((a, b) => 
+          new Date(b.diagnosisDate) - new Date(a.diagnosisDate)
+        );
+        setRecords(sortedRecords);
+        setFilteredRecords(sortedRecords);
         setLoading(false);
       } catch (err) {
         setError(err.message);
@@ -199,21 +222,62 @@ const ViewRecords = () => {
     fetchRecords();
   }, []);
 
+  // Handle search
+  const handleSearch = (e) => {
+    const query = e.target.value.toLowerCase();
+    setSearchQuery(query);
+
+    const filtered = records.filter((record) => {
+      return (
+        record.diseaseName.toLowerCase().includes(query) ||
+        record.hospitalName?.toLowerCase().includes(query) ||
+        new Date(record.diagnosisDate).toLocaleDateString().includes(query) ||
+        record.level?.toLowerCase().includes(query)
+      );
+    });
+
+    setFilteredRecords(filtered);
+  };
+
   if (loading) return <main id="main" className="main"><div className="p-8">Loading...</div></main>;
   if (error) return <main id="main" className="main"><div className="p-8">Error: {error}</div></main>;
 
-  return (
-    <main id="main" className="main">
-      <div className="p-8 bg-gray-100 min-h-screen">
-        <h1 className="text-2xl font-bold text-blue-600 mb-6 mt-20">View Records</h1>
-        <div className="flex flex-wrap justify-center gap-6">
-          {records.map((record, index) => (
-            <ReportCard key={index} {...record} />
-          ))}
+ // Update the return statement in ViewRecords component
+ return (
+  <main id="main" className="main">
+    <div className="p-8 bg-gray-100 min-h-screen">
+      <div className="flex flex-col mb-6 mt-20">
+        {/* Title moved to left corner */}
+        <h1 className="text-2xl font-bold text-blue-600 mb-4 text-left">View Records</h1>
+        
+        {/* Search bar below title */}
+        <div className="relative w-full md:w-1/2 max-w-2xl">
+          <input
+            type="text"
+            placeholder="Search by disease, hospital, date, or level..."
+            value={searchQuery}
+            onChange={handleSearch}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          {searchQuery && filteredRecords.length === 0 && (
+            <p className="text-red-500 mt-2">No records found matching your search.</p>
+          )}
         </div>
       </div>
-    </main>
-  );
-};
 
+      <div className="flex flex-wrap justify-center gap-6 mt-8">
+        {filteredRecords.map((record, index) => (
+          <ReportCard key={record._id || index} {...record} />
+        ))}
+      </div>
+
+      {filteredRecords.length === 0 && searchQuery && (
+        <div className="text-center mt-8">
+          <p className="text-gray-500">No records found matching "{searchQuery}"</p>
+        </div>
+      )}
+    </div>
+  </main>
+);
+}
 export default ViewRecords;
