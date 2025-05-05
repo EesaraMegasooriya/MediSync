@@ -63,6 +63,7 @@ const ShowGraph = () => {
     responsive: true,
     plugins: {
       legend: {
+        
         position: 'top',
       },
       title: {

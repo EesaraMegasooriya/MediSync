@@ -1,43 +1,27 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const dotenv = require('dotenv');
-// const userRoutes = require('./Routes/UserRoute');
-// const PresRoutes = require('./Routes/PresRoute');
-const HealthRoutes = require('./Routes/HealthRecordRoute');
-const path = require('path');
-const fs = require('fs');
-
-dotenv.config();
+require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 5001;
-
-// Ensure uploads directory exists
-const uploadsDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir);
-}
+const port = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use('/uploads', express.static('uploads'));
 
+// Import routes
+const healthRecordRoutes = require('./Routes/HealthRecordRoute');
 
-
-// Routes
-// app.use('/api/users', userRoutes);
-// app.use('/api/prescriptions', PresRoutes);
-app.use('/api/healthrecords', HealthRoutes);
+// Use routes
+app.use('/api/healthrecords', healthRecordRoutes);
 
 // MongoDB connection
-mongoose
-  .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log(`✅ MongoDB connected`))
-  .catch((err) => console.error('❌ MongoDB connection error:', err));
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('✅ MongoDB connected successfully'))
+  .catch(err => console.log('❌ MongoDB connection error:', err));
 
 // Start the server
-app.listen(PORT, () => {
-  console.log(`🚀 Server is running on http://localhost:${PORT}`);
+app.listen(port, () => {
+  console.log(`🚀 Server is running on http://localhost:${port}`);
 });
