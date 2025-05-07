@@ -112,7 +112,10 @@ const AppointmentForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      return Swal.fire("Error", "You must be logged in to book an appointment", "error");
+    }
     if (!emailRegex.test(formData.email)) {
       return Swal.fire("Invalid Email", "Please enter a valid email address.", "error");
     }
@@ -133,8 +136,10 @@ const AppointmentForm = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem('token')}`
         },
         body: JSON.stringify(formData),
+        userId
       });
 
       const data = await response.json();
@@ -290,7 +295,7 @@ const AppointmentForm = () => {
               <span>
                 {sendingReminder 
                   ? "Sending reminder email..." 
-                  : "Send Reminder"
+                  : "Send me an email reminder for this appointment"
                 }
               </span>
             </label>

@@ -1,7 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const AppointmentController = require('../Controllers/AppointmentController');
+const authMiddleware = require('../Middleware/authMiddleware'); // You'll need to implement this
 
+// All routes now require authentication
+router.use(authMiddleware);
 // POST: Create a new appointment
 router.post('/', AppointmentController.AddAppointment);
 
@@ -21,7 +24,7 @@ router.delete('/:id', AppointmentController.DeleteAppointment);
 router.post('/test-reminder/:id', AppointmentController.SendTestReminder);
 
 // POST: Send a test reminder email using form data (no appointment ID)
-router.post('/test-reminder', AppointmentController.SendTestReminderFromForm);
+//router.post('/test-reminder', AppointmentController.SendTestReminderFromForm);
 
 // POST: Manually trigger reminder job (e.g., daily reminder check)
 router.post('/check-reminders', AppointmentController.CheckReminders);

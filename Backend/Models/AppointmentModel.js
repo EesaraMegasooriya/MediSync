@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const appointmentSchema = new mongoose.Schema(
   {
+  
     email: {
       type: String,
       required: [true, "Provide email"],

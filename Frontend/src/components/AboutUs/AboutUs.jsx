@@ -3,6 +3,7 @@ import { Link } from "react-router-dom"; // Import Link for navigation
 import AboutUsImg from "../../assets/selflove.png";
 
 const AboutUs = () => {
+  const userId = localStorage.getItem('userId');
   return (
     <div className="relative bg-gradient-to-br from-blue-100 to-purple-200 min-h-screen flex items-center justify-center px-6 py-12 overflow-hidden">
       
@@ -42,6 +43,21 @@ const AboutUs = () => {
           <p className="text-lg text-gray-900 mt-4 leading-relaxed">
             <span className="text-blue-600 font-semibold">Join us</span> in revolutionizing the way healthcare services are managed.
           </p>
+          {userId ? (
+          <Link 
+            to="/appointments"
+            className="inline-block mt-6 px-6 py-3 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold text-lg shadow-md hover:shadow-xl hover:scale-105 transition-all duration-300"
+          >
+            View Your Appointments
+          </Link>
+        ) : (
+          <Link
+            to="/register"
+            className="inline-block mt-6 px-6 py-3 rounded-full bg-gradient-to-r from-green-600 to-blue-600 text-white font-bold text-lg shadow-md hover:shadow-xl hover:scale-105 transition-all duration-300"
+          >
+            Get Started
+          </Link>
+        )}
 
           {/* Call to Action Button */}
           <button className="mt-6 px-6 py-3 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold text-lg shadow-md hover:shadow-xl hover:scale-105 transition-all duration-300">
