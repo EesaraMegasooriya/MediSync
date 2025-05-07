@@ -6,6 +6,7 @@ import Home from './components/Home';
 import ChatBot from './components/ChatBot';
 import Tracker from './components/MediTracker/Tracker';
 import AddPrescriptions from './components/MediTracker/AddPrescriptions';
+import PrescriptionHistory from './components/MediTracker/PrescriptionHistory';
 
 import Login from './components/User/Login';
 import Register from './components/User/Register';
@@ -31,6 +32,8 @@ function App() {
         <Route path="/tracker" element={<Tracker />} /> {/* Tracker route */}
         <Route path="/add-prescriptions" element={<AddPrescriptions />} /> {/* AddPrescriptions route */}
         <Route path="/chatbot" element={<ChatBot />} /> 
+        <Route path="/prescription-history" element={<PrescriptionHistory />} />
+
         
         
         

@@ -148,7 +148,7 @@ const handleAddItem = (prescriptionIndex, field) => {
                 src={
                   prescription.image
                     ? `http://localhost:5001/uploads/${prescription.image}`
-                    : 'default-image.png' // 👈 Make sure this image is in your `public` folder
+                    : 'df-img.jpeg' //  Make sure this image is in your `public` folder
                 }
                 alt={prescription.medicationName}
                 className="w-24 h-32 object-cover rounded-md mb-2"

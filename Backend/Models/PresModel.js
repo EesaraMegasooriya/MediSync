@@ -2,10 +2,10 @@ const mongoose = require('mongoose');
 
 const prescriptionSchema = new mongoose.Schema(
   {
-    username: {
-      type: String,
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
       required: true,
-      trim: true,
     },
     medicationName: {
       type: String,
@@ -19,7 +19,7 @@ const prescriptionSchema = new mongoose.Schema(
     },
     image: {
       type: String,
-      default: '', // Optional: to handle cases without an uploaded image
+      default: '',
     },
     prescriptions: {
       type: [String],

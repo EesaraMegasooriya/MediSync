@@ -1,28 +1,55 @@
 const Prescription = require('../Models/PresModel');
+const PrescriptionHistory = require('../Models/PrescriptionHistory');
 
-// @desc Create new prescription
+
+
 exports.createPrescription = async (req, res) => {
   try {
-    const { medicationName, doctorName, prescriptions, tips, username } = req.body;
+    const { medicationName, doctorName, userId } = req.body;
 
-    const image = req.file ? req.file.filename : '';
+    let tips = req.body.tips || [];
+    let prescriptions = req.body.prescriptions || [];
+
+    if (typeof tips === 'string') tips = [tips];
+    if (typeof prescriptions === 'string') prescriptions = [prescriptions];
+
+    const image = req.file ? req.file.filename : 'default_med_image.jpg';
 
     const newPrescription = new Prescription({
-      username, 
+      userId,
       medicationName,
-      image,
       doctorName,
       prescriptions,
       tips,
+      image,
     });
 
     await newPrescription.save();
-    res.status(201).json({ success: true, message: "Prescription added successfully!" });
+
+    const historyEntry = new PrescriptionHistory({
+      userId,
+      medicationName,
+      doctorName,
+      prescriptions,
+      tips,
+      image,
+      action: 'created',
+    });
+
+    await historyEntry.save();
+
+    res.status(201).json({ success: true, message: 'Prescription added successfully!' });
   } catch (error) {
-    console.error("Error saving prescription:", error);
+    console.error("Internal server error:", error);
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+
+
+
+
+
 
 
 // @desc Get all prescriptions
@@ -49,12 +76,26 @@ exports.updatePrescription = async (req, res) => {
     if (req.file) updateData.image = req.file.filename;
 
     const updated = await Prescription.findByIdAndUpdate(req.params.id, updateData, { new: true });
+
+    //  Save update history
+    const historyEntry = new PrescriptionHistory({
+      username: updated.username,
+      medicationName: updated.medicationName,
+      doctorName: updated.doctorName,
+      image: updated.image,
+      prescriptions: updated.prescriptions,
+      tips: updated.tips,
+      action: 'updated',
+    });
+    await historyEntry.save();
+
     res.status(200).json(updated);
   } catch (error) {
     console.error("Update Error:", error);
     res.status(500).json({ message: 'Update failed' });
   }
 };
+
 
 exports.deletePrescription = async (req, res) => {
   try {
