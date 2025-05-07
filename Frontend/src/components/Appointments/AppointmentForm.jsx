@@ -7,7 +7,7 @@ const API_URL = "http://localhost:5001/api/appointments"; // Update based on you
 
 const AppointmentForm = () => {
   const [formData, setFormData] = useState({
-    email: "",
+   
     doctorName: "",
     date: "",
     day: "",
