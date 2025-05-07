@@ -59,10 +59,7 @@ const AboutUs = () => {
           </Link>
         )}
 
-          {/* Call to Action Button */}
-          <button className="mt-6 px-6 py-3 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold text-lg shadow-md hover:shadow-xl hover:scale-105 transition-all duration-300">
-            Learn More
-          </button>
+         
         </div>
       </div>
     </div>
