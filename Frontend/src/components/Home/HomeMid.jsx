@@ -5,7 +5,7 @@ import State from './Images/stats.png';
 
 function HomeMid() {
   return (
-    <div className="px-5 md:px-10 font-poppins pb-12">
+    <div className="mx-48 font-poppins pb-12">
       <div className="text-center md:text-left bg-gradient-to-r from-blue-400 to-purple-600 text-transparent bg-clip-text font-bold text-lg md:text-xl">
         FEATURES WE PROVIDE
       </div>
