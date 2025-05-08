@@ -4,12 +4,11 @@ const HealthRecord = require('../Models/HealthRecordModel');
 exports.createHealthRecord = async (req, res) => {
     try {
         const newRecord = new HealthRecord({
-            ...req.body,
-            userId: req.user?._id || '507f1f77bcf86cd799439011' // Temporary default ID
+            ...req.body
         });
 
         // Validate date
-        if (new Date(req.body.diagnosisDate) < new Date().setHours(0,0,0,0)) {
+        if (new Date(req.body.diagnosisDate) > new Date()) {
             return res.status(400).json({ 
                 message: 'Validation failed',
                 errors: { diagnosisDate: 'Diagnosis date cannot be in the past' }

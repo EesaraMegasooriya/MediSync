@@ -202,7 +202,15 @@ const ViewRecords = () => {
   useEffect(() => {
     const fetchRecords = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/healthrecords/getallrecords/user/507f1f77bcf86cd799439011');
+
+        const userId = localStorage.getItem('userId');
+        if (!userId) {
+            setError('User ID is missing. Please log in again.');
+            setLoading(false);
+            return;
+        }
+
+        const response = await fetch(`http://localhost:5000/api/healthrecords/getallrecords/user/${userId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch records');
         }

@@ -33,7 +33,8 @@ const HealthRecords = () => {
 
   useEffect(() => {
     const fetchRecords = async () => {
-        const userId = localStorage.getItem('userId'); // Get userId from localStorage
+        const userId = localStorage.getItem('userId');
+        console.log('User ID:', userId); // Debugging line to check userId
         if (!userId) {
             setError('User ID is missing. Please log in again.');
             setLoading(false);
@@ -41,7 +42,7 @@ const HealthRecords = () => {
         }
 
         try {
-            const response = await fetch(`http://localhost:5000/api/healthrecords/getallrecords/user/507f1f77bcf86cd799439011`);
+            const response = await fetch(`http://localhost:5000/api/healthrecords/getallrecords/user/${userId}`);
             if (!response.ok) throw new Error('Failed to fetch records');
             const data = await response.json();
             const sortedRecords = data.sort((a, b) => new Date(b.diagnosisDate) - new Date(a.diagnosisDate));
@@ -84,19 +85,14 @@ const HealthRecords = () => {
           >
             Add Records
           </button>
-          <button
-            className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600"
-            onClick={() => navigate("/records/graph")}
-          >
-            Show Graph
-          </button>
+        
         </div>
       </div>
 
       {loading ? (
         <div className="text-center mt-8">Loading...</div>
       ) : error ? (
-        <div className="text-center mt-8 text-red-500">Error: {error}</div>
+        <div className="text-center mt-8 text-red-500">No record data available</div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
           {records.slice(0, 3).map((record, index) => (

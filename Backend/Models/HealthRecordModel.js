@@ -36,7 +36,6 @@ const healthRecordSchema = new mongoose.Schema({
     additionalNote: String,
     userId: {
         type: String,
-        ref: 'User',
         required: true
     }
 }, {

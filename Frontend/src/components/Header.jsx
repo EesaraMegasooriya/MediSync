@@ -71,28 +71,29 @@ const Header = () => {
         } transition-transform duration-300 ease-in-out md:relative md:h-auto md:w-auto md:bg-transparent md:text-black md:flex md:translate-x-0`}>
           <ul className="flex flex-col space-y-6 p-8 md:flex-row md:space-y-0 md:space-x-6 md:p-0">
             <li><a href="/" className="hover:text-blue-400 text-lg" onClick={closeMenu}>Home</a></li>
-            <li><a href="/records" className="hover:text-blue-400 text-lg" onClick={closeMenu}>Health Records</a></li>
+            {isLoggedIn && (
+              <li><a href="/records" className="hover:text-blue-400 text-lg" onClick={closeMenu}>Health Records</a></li>
+            )}
             <li><a href="/appointments" className="hover:text-blue-400 text-lg" onClick={closeMenu}>Appointments</a></li>
             <li><a href="/tracker" className="hover:text-blue-400 text-lg" onClick={closeMenu}>Medication Tracker</a></li>
             <li><a href="/about" className="hover:text-blue-400 text-lg" onClick={closeMenu}>About</a></li>
             <li>
-  <a href="/profile" onClick={closeMenu} className="flex items-center gap-2 hover:text-blue-400 text-lg">
-    {isLoggedIn ? (
-      profilePicUrl ? (
-        <img
-          src={profilePicUrl}
-          alt="Profile"
-          className="w-8 h-8 rounded-full object-cover"
-        />
-      ) : (
-        <span className="font-semibold">{username}</span>
-      )
-    ) : (
-      "Profile"
-    )}
-  </a>
-</li>
-
+              <a href="/profile" onClick={closeMenu} className="flex items-center gap-2 hover:text-blue-400 text-lg">
+                {isLoggedIn ? (
+                  profilePicUrl ? (
+                    <img
+                      src={profilePicUrl}
+                      alt="Profile"
+                      className="w-8 h-8 rounded-full object-cover"
+                    />
+                  ) : (
+                    <span className="font-semibold">{username}</span>
+                  )
+                ) : (
+                  "Profile"
+                )}
+              </a>
+            </li>
           </ul>
         </nav>
         {/* Menu Toggle Button */}

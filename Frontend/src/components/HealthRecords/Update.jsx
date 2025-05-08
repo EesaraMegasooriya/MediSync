@@ -8,7 +8,7 @@ const MedicalRecordForm = () => {
   const [showUpdateAlert, setShowUpdateAlert] = useState(false);
   const [formData, setFormData] = useState({
     diseaseName: recordData.diseaseName || '',
-    diagnosisDate: recordData.diagnosisDate || '',
+    diagnosisDate: recordData.diagnosisDate ? new Date(recordData.diagnosisDate).toISOString().split('T')[0] : '',
     symptoms: recordData.symptoms || '',
     diagnosedBy: recordData.diagnosedBy || '',
     doctorsNote: recordData.doctorsNote || '',
@@ -140,12 +140,13 @@ const MedicalRecordForm = () => {
           </div>
 
           <div className="relative">
-            <input
+                        <input
               type="date"
               name="diagnosisDate"
-              value={formData.diagnosisDate}
+              value={formData.diagnosisDate || ''}
               onChange={handleInputChange}
-              className={`border p-2 rounded w-full ${errors.diagnosisDate ? 'border-red-500' : ''}`}
+              placeholder="Select date"
+              className={`border p-2 rounded w-full ${errors.diagnosisDate ? 'border-red-500' : 'border-gray-300'}`}
             />
             {errors.diagnosisDate && <span className="text-red-500 text-xs">{errors.diagnosisDate}</span>}
           </div>
