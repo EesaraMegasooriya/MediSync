@@ -1,11 +1,15 @@
-const Prescription = require('../Models/PresModel');
 const PrescriptionHistory = require('../Models/PrescriptionHistory');
+const Prescription = require('../Models/Prescription'); // assuming this is also imported
 
-
-
+// @desc Create prescription
 exports.createPrescription = async (req, res) => {
   try {
-    const { medicationName, doctorName, userId } = req.body;
+    const { medicationName, doctorName } = req.body;
+    const userId = req.body.userId;
+
+    if (!userId) {
+      return res.status(400).json({ success: false, message: 'User ID is required' });
+    }
 
     let tips = req.body.tips || [];
     let prescriptions = req.body.prescriptions || [];
@@ -13,7 +17,7 @@ exports.createPrescription = async (req, res) => {
     if (typeof tips === 'string') tips = [tips];
     if (typeof prescriptions === 'string') prescriptions = [prescriptions];
 
-    const image = req.file ? req.file.filename : 'default_med_image.jpg';
+    const image = req.file?.filename || 'default_med_image.jpg';
 
     const newPrescription = new Prescription({
       userId,
@@ -21,36 +25,17 @@ exports.createPrescription = async (req, res) => {
       doctorName,
       prescriptions,
       tips,
-      image,
+      image
     });
 
     await newPrescription.save();
 
-    const historyEntry = new PrescriptionHistory({
-      userId,
-      medicationName,
-      doctorName,
-      prescriptions,
-      tips,
-      image,
-      action: 'created',
-    });
-
-    await historyEntry.save();
-
-    res.status(201).json({ success: true, message: 'Prescription added successfully!' });
+    res.status(201).json({ message: 'Prescription created successfully' });
   } catch (error) {
-    console.error("Internal server error:", error);
-    res.status(500).json({ success: false, message: "Server error" });
+    console.error("Create Error:", error);
+    res.status(500).json({ message: 'Failed to create prescription' });
   }
 };
-
-
-
-
-
-
-
 
 // @desc Get all prescriptions
 exports.getAllPrescriptions = async (req, res) => {
@@ -58,51 +43,51 @@ exports.getAllPrescriptions = async (req, res) => {
     const prescriptions = await Prescription.find();
     res.status(200).json(prescriptions);
   } catch (error) {
-    console.error("Error fetching prescriptions:", error);
-    res.status(500).json({ success: false, message: "Server error" });
+    console.error("Fetch Error:", error);
+    res.status(500).json({ message: 'Failed to fetch prescriptions' });
   }
 };
 
-
+// @desc Update prescription
 exports.updatePrescription = async (req, res) => {
   try {
-    const { medicationName, doctorName, prescriptions, tips } = req.body;
-    const updateData = {
+    const { medicationName, doctorName } = req.body;
+
+    const prescriptions = JSON.parse(req.body.prescriptions || '[]');
+    const tips = JSON.parse(req.body.tips || '[]');
+    const image = req.file?.filename;
+
+    const updatedData = {
       medicationName,
       doctorName,
-      prescriptions: JSON.parse(prescriptions),
-      tips: JSON.parse(tips),
+      prescriptions,
+      tips
     };
-    if (req.file) updateData.image = req.file.filename;
 
-    const updated = await Prescription.findByIdAndUpdate(req.params.id, updateData, { new: true });
+    if (image) updatedData.image = image;
 
-    //  Save update history
-    const historyEntry = new PrescriptionHistory({
-      username: updated.username,
-      medicationName: updated.medicationName,
-      doctorName: updated.doctorName,
-      image: updated.image,
-      prescriptions: updated.prescriptions,
-      tips: updated.tips,
-      action: 'updated',
-    });
-    await historyEntry.save();
+    const updated = await Prescription.findByIdAndUpdate(
+      req.params.id,
+      updatedData,
+      { new: true }
+    );
 
-    res.status(200).json(updated);
-  } catch (error) {
-    console.error("Update Error:", error);
-    res.status(500).json({ message: 'Update failed' });
+    if (!updated) return res.status(404).json({ message: 'Prescription not found' });
+
+    res.status(200).json({ message: 'Prescription updated successfully' });
+  } catch (err) {
+    console.error('Update error:', err.message);
+    res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
 
-
+// @desc Delete prescription
 exports.deletePrescription = async (req, res) => {
   try {
     await Prescription.findByIdAndDelete(req.params.id);
-    res.status(200).json({ message: 'Deleted successfully' });
+    res.status(200).json({ message: 'Prescription deleted successfully' });
   } catch (error) {
     console.error("Delete Error:", error);
-    res.status(500).json({ message: 'Delete failed' });
+    res.status(500).json({ message: 'Failed to delete prescription' });
   }
 };
