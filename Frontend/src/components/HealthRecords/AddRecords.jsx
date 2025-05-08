@@ -91,6 +91,7 @@ const AddRecords = () => {
               name="diagnosisDate"
               value={formData.diagnosisDate}
               onChange={handleInputChange}
+              max={new Date().toISOString().split('T')[0]} // This will disable future dates
               placeholder="Diagnosis Date"
               className={`border p-2 rounded w-full ${errors.diagnosisDate ? 'border-red-500' : ''}`}
             />
