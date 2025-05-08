@@ -62,7 +62,7 @@ function HomeBottom() {
         </div>
 
         <div className="w-full md:w-auto">
-          <img src={DrImg} alt="Doctor" className="w-[500px]" />
+          <img src={DrImg} alt="Doctor" className="w-[400px]" />
         </div>
       </div>
 
