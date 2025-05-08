@@ -300,13 +300,7 @@ const AppointmentList = () => {
       )}
 
       <div className="text-center mt-4 flex justify-center space-x-4">
-        <button
-          onClick={generatePDF}
-          className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-green-700 transition"
-          disabled={filteredAppointments.length === 0}
-        >
-          <FaFilePdf className="mr-2" /> Download PDF Report
-        </button>
+        
 
         <button
           onClick={generateCSV}
