@@ -1,21 +1,40 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
+
 import TrackImg2 from '../MediTracker/Images/Track2.png';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 
-import { useNavigate } from 'react-router-dom';
-
-
-
 function AddPrescriptions() {
 
   
-  const navigate = useNavigate();
+
   const [tips, setTips] = useState(['']);
   const [prescriptions, setPrescriptions] = useState(['']);
   const [medicationName, setMedicationName] = useState('');
   const [doctorName, setDoctorName] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
+  const [medicationsList, setMedicationsList] = useState([]);
+const [doctorsList, setDoctorsList] = useState([]);
+const [isNewMedication, setIsNewMedication] = useState(false);
+const [isNewDoctor, setIsNewDoctor] = useState(false);
+const DEFAULT_IMAGE = 'df-img.jpeg'; // Default image 
+
+
+
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const meds = await axios.get('http://localhost:5001/api/medications');
+      const docs = await axios.get('http://localhost:5001/api/doctors');
+      setMedicationsList(meds.data);
+      setDoctorsList(docs.data);
+    } catch (err) {
+      console.error("Error fetching data", err);
+    }
+  };
+  fetchData();
+}, []);
+
 
   const handleChange = (index, value) => {
     const updatedTips = [...tips];
@@ -48,30 +67,83 @@ function AddPrescriptions() {
   };
 
   const handleSubmit = async () => {
-    const username = localStorage.getItem('username'); // ✅ Make sure this returns a value
-
-const formData = new FormData();
-formData.append('username', username); // ✅ This line must exist BEFORE sending
- // ✅ fetch userId
-    
-    formData.append('medicationName', medicationName);
-    formData.append('doctorName', doctorName);
-    if (selectedImage) {
-      formData.append('image', selectedImage);
+    const nonEmptyPrescriptions = prescriptions.filter(p => p.trim() !== '');
+    const nonEmptyTips = tips.filter(t => t.trim() !== '');
+  
+    const errors = [];
+  
+    if (!medicationName.trim()) errors.push('Medication is required.');
+    if (!doctorName.trim()) errors.push('Doctor name is required.');
+    if (nonEmptyPrescriptions.length === 0) errors.push('At least one prescription is required.');
+  
+    if (errors.length > 0) {
+      Swal.fire('Validation Error', errors.join('<br/>'), 'warning');
+      return;
     }
-    tips.forEach(tip => formData.append('tips[]', tip));
-    prescriptions.forEach(p => formData.append('prescriptions[]', p));
-
+  
     try {
-      const res = await axios.post('http://localhost:5001/api/prescriptions', formData);
-        Swal.fire('Success!', res.data.message, 'success').then(() => {
-            navigate('/tracker'); // ✅ Navigates after the user confirms success
+      // 1. Save new medication if manually added
+      if (isNewMedication) {
+        await axios.post('http://localhost:5001/api/medications', {
+          name: medicationName,
+          description: '',
         });
+      }
+  
+      // 2. Save new doctor if manually added
+      if (isNewDoctor) {
+        await axios.post('http://localhost:5001/api/doctors', {
+          name: doctorName,
+          specialization: '',
+          contact: '',
+        });
+      }
+
+      const userId = localStorage.getItem('userId'); // Get userId from local storage
+if (!userId) {
+  Swal.fire('Error', 'User not logged in.', 'error');
+  return;
+}
+  
+      // 3. Submit prescription
+      const formData = new FormData();
+      formData.append('medicationName', medicationName);
+      formData.append('doctorName', doctorName);
+      formData.append('userId', userId);
+      //  Use selected image OR fallback to default
+if (selectedImage) {
+  formData.append('image', selectedImage);
+} else {
+  formData.append('image', DEFAULT_IMAGE); // Must match server logic
+}
+      nonEmptyTips.forEach(tip => formData.append('tips', tip));
+      nonEmptyPrescriptions.forEach(p => formData.append('prescriptions', p));
+  
+      const res = await axios.post('http://localhost:5001/api/prescriptions', formData);
+  
+      // 4. Refresh lists
+      const updatedMeds = await axios.get('http://localhost:5001/api/medications');
+      const updatedDocs = await axios.get('http://localhost:5001/api/doctors');
+      setMedicationsList(updatedMeds.data);
+      setDoctorsList(updatedDocs.data);
+  
+      // 5. Reset form
+      setMedicationName('');
+      setDoctorName('');
+      setSelectedImage(null);
+      setTips(['']);
+      setPrescriptions(['']);
+      setIsNewMedication(false);
+      setIsNewDoctor(false);
+  
+      Swal.fire('Success!', res.data.message, 'success');
     } catch (err) {
       console.error(err);
       Swal.fire('Error!', 'Failed to add prescription.', 'error');
     }
   };
+  
+  
 
   return (
     <div>
@@ -94,8 +166,8 @@ formData.append('username', username); // ✅ This line must exist BEFORE sendin
             <button className="bg-gradient-to-r from-[#3A8EF6] to-[#6F3AFA] text-white px-4 py-2 rounded-xl font-bold hover:bg-purple-700 active:bg-purple-900 transition duration-200">
               <a href='/tracker'>View Prescriptions</a>
             </button>
-            <button className="bg-gradient-to-r from-[#3A8EF6] to-[#6F3AFA] text-white px-4 py-2 rounded-xl font-bold hover:bg-purple-700 active:bg-purple-900 transition duration-200">
-              Add Prescriptions
+            <button  className="bg-gradient-to-r from-[#3A8EF6] to-[#6F3AFA] text-white px-4 py-2 rounded-xl font-bold hover:bg-purple-700 active:bg-purple-900 transition duration-200" >
+              <a href='/add-prescriptions'>Add Prescriptions</a>
             </button>
           </div>
         </div>
@@ -106,15 +178,35 @@ formData.append('username', username); // ✅ This line must exist BEFORE sendin
 
       <div className="flex flex-col gap-4 w-2/4 pl-32">
         <div className="flex gap-1 justify-center">
-          <div className="w-full flex flex-col items-center">
-            <label className="w-full text-xl font-medium text-gray-700 pl-2 pb-2 text-left">Medication Name</label>
-            <input
-              className="w-full p-2 rounded-lg shadow-md border border-gray-300 focus:ring focus:ring-blue-300"
-              placeholder="Enter Medication Name"
-              value={medicationName}
-              onChange={(e) => setMedicationName(e.target.value)}
-            />
-          </div>
+        <div className="w-full flex flex-col items-center">
+  <label className="w-full text-xl font-medium text-gray-700 pl-2 pb-2 text-left">Medication</label>
+  {!isNewMedication ? (
+    <select
+      className="w-full p-2 rounded-lg shadow-md border border-gray-300 focus:ring focus:ring-blue-300"
+      value={medicationName}
+      onChange={(e) => setMedicationName(e.target.value)}
+    >
+      <option value="">-- Select Medication --</option>
+      {medicationsList.map((med, idx) => (
+        <option key={idx} value={med.name}>{med.name}</option>
+      ))}
+    </select>
+  ) : (
+    <input
+      className="w-full p-2 rounded-lg shadow-md border border-gray-300 focus:ring focus:ring-blue-300"
+      placeholder="Enter New Medication"
+      value={medicationName}
+      onChange={(e) => setMedicationName(e.target.value)}
+    />
+  )}
+  <button
+    onClick={() => setIsNewMedication(!isNewMedication)}
+    className="text-sm text-blue-600 underline mt-2"
+  >
+    {isNewMedication ? "Select Existing" : "Add New Medication"}
+  </button>
+</div>
+
           <div className="w-full flex flex-col items-center">
             <label className="w-full text-xl font-medium text-gray-700 pl-2 pb-2 text-left">Upload Image</label>
             <input
@@ -126,15 +218,34 @@ formData.append('username', username); // ✅ This line must exist BEFORE sendin
         </div>
 
         <div className="w-full flex flex-col items-center">
-          <label className="w-full text-xl font-medium text-gray-700 pl-2 pb-2 text-left">Doctor Name</label>
-          <input
-            className="w-full p-2 rounded-lg shadow-md border border-gray-300 focus:ring focus:ring-blue-300"
-            placeholder="Enter Doctor Name"
-            type="text"
-            value={doctorName}
-            onChange={(e) => setDoctorName(e.target.value)}
-          />
-        </div>
+  <label className="w-full text-xl font-medium text-gray-700 pl-2 pb-2 text-left">Doctor Name</label>
+  {!isNewDoctor ? (
+    <select
+      className="w-full p-2 rounded-lg shadow-md border border-gray-300 focus:ring focus:ring-blue-300"
+      value={doctorName}
+      onChange={(e) => setDoctorName(e.target.value)}
+    >
+      <option value="">-- Select Doctor --</option>
+      {doctorsList.map((doc, idx) => (
+        <option key={idx} value={doc.name}>{doc.name}</option>
+      ))}
+    </select>
+  ) : (
+    <input
+      className="w-full p-2 rounded-lg shadow-md border border-gray-300 focus:ring focus:ring-blue-300"
+      placeholder="Enter New Doctor Name"
+      value={doctorName}
+      onChange={(e) => setDoctorName(e.target.value)}
+    />
+  )}
+  <button
+    onClick={() => setIsNewDoctor(!isNewDoctor)}
+    className="text-sm text-blue-600 underline mt-2"
+  >
+    {isNewDoctor ? "Select Existing" : "Add New Doctor"}
+  </button>
+</div>
+
 
         <div className="w-full flex flex-col items-center">
           <label className="w-full text-xl font-medium text-gray-700 pl-2 pb-2 text-left">Prescriptions</label>
@@ -205,7 +316,7 @@ formData.append('username', username); // ✅ This line must exist BEFORE sendin
             onClick={handleSubmit}
             className="bg-gradient-to-r from-[#3A8EF6] to-[#6F3AFA] text-white px-4 py-2 rounded-xl font-bold hover:bg-purple-700 active:bg-purple-900 transition duration-200"
           >
-            Save
+            Add Prescription
           </button>
           <button className="bg-gradient-to-r from-[#3A8EF6] to-[#6F3AFA] text-white px-4 py-2 rounded-xl font-bold hover:bg-purple-700 active:bg-purple-900 transition duration-200">
             Cancel
