@@ -4,7 +4,7 @@ import Photo1 from '../../assets/Photo1.png';
 function HomeUpper() {
   return (
     <div className="bg-gradient-radial from-blue-400/70 to-white py-20 flex items-center">
-      <div className="w-full flex flex-col-reverse md:flex-row justify-between items-center px-5 md:px-10 gap-10">
+      <div className="w-full flex flex-col-reverse md:flex-row justify-between items-center mx-48 gap-10">
         <div className="text-center md:text-left">
           <div className="flex flex-col gap-5">
             <div className="text-blue-500 text-4xl md:text-5xl font-extrabold font-poppins">Expert Healthcare</div>

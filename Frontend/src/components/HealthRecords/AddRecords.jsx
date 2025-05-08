@@ -59,7 +59,7 @@ const AddRecords = () => {
           throw new Error("Failed to save record");
         }
   
-        console.log("Record saved successfully");
+        console.log("Payload:", formData);
         navigate("/records/Allrecords");
       } catch (error) {
         console.error("Error saving record:", error);

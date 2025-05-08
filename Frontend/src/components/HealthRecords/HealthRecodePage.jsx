@@ -29,23 +29,33 @@ const HealthRecords = () => {
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+ 
 
   useEffect(() => {
     const fetchRecords = async () => {
-      try {
-        const response = await fetch('http://localhost:5000/api/healthrecords/getallrecords/user/507f1f77bcf86cd799439011');
-        if (!response.ok) throw new Error('Failed to fetch records');
-        const data = await response.json();
-        const sortedRecords = data.sort((a, b) => new Date(b.diagnosisDate) - new Date(a.diagnosisDate));
-        setRecords(sortedRecords);
-        setLoading(false);
-      } catch (err) {
-        setError(err.message);
-        setLoading(false);
-      }
+        const userId = localStorage.getItem('userId'); // Get userId from localStorage
+        if (!userId) {
+            setError('User ID is missing. Please log in again.');
+            setLoading(false);
+            return;
+        }
+
+        try {
+            const response = await fetch(`http://localhost:5000/api/healthrecords/getallrecords/user/507f1f77bcf86cd799439011`);
+            if (!response.ok) throw new Error('Failed to fetch records');
+            const data = await response.json();
+            const sortedRecords = data.sort((a, b) => new Date(b.diagnosisDate) - new Date(a.diagnosisDate));
+            setRecords(sortedRecords); // Update state with fetched records
+            setLoading(false);
+        } catch (err) {
+            setError(err.message);
+            setLoading(false);
+        }
     };
+
     fetchRecords();
-  }, []);
+}, []);
+  
 
   const handleSearch = (e) => {
     e.preventDefault();

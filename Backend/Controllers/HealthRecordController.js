@@ -42,21 +42,23 @@ exports.createHealthRecord = async (req, res) => {
 // Get all health records for a user
 exports.getAllHealthRecords = async (req, res) => {
     try {
-        const userId = req.params.id;
-        if (!userId) {
-            return res.status(400).json({ message: 'User ID is required' });
-        }
-
-        const records = await HealthRecord.find({ userId: userId });
-        if (!records || records.length === 0) {
-            return res.status(404).json({ message: 'No records found for this user' });
-        }
-        
-        res.status(200).json(records);
+      const userId = req.params.id; // Extract userId from URL parameters
+  
+      if (!userId) {
+        return res.status(400).json({ message: 'User ID is required' });
+      }
+  
+      const records = await HealthRecord.find({ userId }); // Fetch records for the user
+  
+      if (!records || records.length === 0) {
+        return res.status(404).json({ message: 'No records found for this user' });
+      }
+  
+      res.status(200).json(records); // Return the records
     } catch (error) {
-        res.status(500).json({ message: error.message });
+      res.status(500).json({ message: error.message });
     }
-};
+  };
 
 // Get single health record
 exports.getHealthRecord = async (req, res) => {

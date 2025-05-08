@@ -7,7 +7,6 @@ const {
     getHealthRecord,
     updateHealthRecord,
     deleteHealthRecord,
-   
 } = require('../Controllers/HealthRecordController');
 
 // Routes with auth middleware
