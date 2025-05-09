@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
 import DrImg from './Images/dricon.png';
 import { motion } from 'framer-motion';
 import Daham from './Images/Comenters/Daham.png';
 import Eesara from './Images/Comenters/Eesara.png';
 import Girl from './Images/Comenters/Girl.png';
+import { useState } from 'react';
 
 
 function HomeBottom() {
@@ -62,7 +62,7 @@ function HomeBottom() {
         </div>
 
         <div className="w-full md:w-auto">
-          <img src={DrImg} alt="Doctor" className="w-[500px]" />
+          <img src={DrImg} alt="Doctor" className="w-[400px]" />
         </div>
       </div>
 

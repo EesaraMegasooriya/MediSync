@@ -4,6 +4,10 @@ import moment from 'moment';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
+
+import Swal from 'sweetalert2';
+
+
 function PrescriptionHistory() {
   const [history, setHistory] = useState([]);
   const [filtered, setFiltered] = useState([]);
@@ -35,7 +39,8 @@ function PrescriptionHistory() {
     );
     setFiltered(filteredData);
   }, [search, history]);
-  
+
+
 
   const exportToPDF = () => {
     const doc = new jsPDF();
@@ -56,6 +61,14 @@ function PrescriptionHistory() {
     });
 
     doc.save("prescription-history.pdf");
+
+    Swal.fire({
+      title: 'Exported!',
+      text: 'PDF file has been downloaded.',
+      icon: 'success',
+      confirmButtonText: 'OK'
+    });
+
   };
 
   if (loading) {
@@ -69,7 +82,10 @@ function PrescriptionHistory() {
       <div className="flex justify-between mb-4">
         <input
           type="text"
-          placeholder="Filter by Medication Name"
+
+
+          placeholder="Filter by Medication or Doctor Name"
+
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="border border-gray-300 px-4 py-2 rounded-md shadow-sm w-80"
@@ -89,7 +105,7 @@ function PrescriptionHistory() {
           <table className="min-w-full border border-gray-300 shadow-md rounded-lg">
             <thead className="bg-blue-100 text-gray-700">
               <tr>
-                
+
                 <th className="py-2 px-4 text-left">Medication</th>
                 <th className="py-2 px-4 text-left">Doctor</th>
                 <th className="py-2 px-4 text-left">Prescriptions</th>
@@ -101,7 +117,7 @@ function PrescriptionHistory() {
             <tbody className="bg-white">
               {filtered.map((entry, index) => (
                 <tr key={index} className="border-t border-gray-200">
-                  
+
                   <td className="py-2 px-4">{entry.medicationName}</td>
                   <td className="py-2 px-4">{entry.doctorName}</td>
                   <td className="py-2 px-4">
