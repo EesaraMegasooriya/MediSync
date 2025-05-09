@@ -1,13 +1,21 @@
 const mongoose = require('mongoose');
 
 const prescriptionHistorySchema = new mongoose.Schema({
-  username: String,
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
+  username: {
+    type: String, 
+    default: null
+  },
   medicationName: String,
   doctorName: String,
   image: String,
   prescriptions: [String],
   tips: [String],
-  action: String, // "created" or "updated"
+  action: String,
   timestamp: {
     type: Date,
     default: Date.now,

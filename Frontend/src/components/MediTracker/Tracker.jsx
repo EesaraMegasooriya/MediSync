@@ -130,6 +130,9 @@ const handleAddItem = (prescriptionIndex, field) => {
             <button  className="bg-gradient-to-r from-[#3A8EF6] to-[#6F3AFA] text-white px-4 py-2 rounded-xl font-bold hover:bg-purple-700 active:bg-purple-900 transition duration-200" >
               <a href='/add-prescriptions'>Add Prescriptions</a>
             </button>
+            <button  className="bg-gradient-to-r from-[#3A8EF6] to-[#6F3AFA] text-white px-4 py-2 rounded-xl font-bold hover:bg-purple-700 active:bg-purple-900 transition duration-200" >
+              <a href='/prescription-history'> Prescription History</a>
+            </button>
           </div>
         </div>
 
@@ -145,14 +148,17 @@ const handleAddItem = (prescriptionIndex, field) => {
         {prescriptions.map((prescription, index) => (
           <div key={index} className="flex flex-col items-center justify-center font-bold shadow-md rounded-lg p-4 text-center">
             <img
-                src={
-                  prescription.image
-                    ? `http://localhost:5001/uploads/${prescription.image}`
-                    : 'df-img.jpeg' //  Make sure this image is in your `public` folder
-                }
-                alt={prescription.medicationName}
-                className="w-24 h-32 object-cover rounded-md mb-2"
-              />
+  src={
+    prescription.image &&
+    prescription.image !== 'undefined' &&
+    prescription.image !== ''
+      ? `http://localhost:5001/uploads/${prescription.image}`
+      : '/df-img.jpeg'
+  }
+  alt={prescription.medicationName}
+  className="w-24 h-32 object-cover rounded-md mb-2"
+/>
+
 
             <div className="font-bold">{prescription.medicationName}</div>
             <div className="text-sm text-gray-600">{prescription.doctorName}</div>
@@ -177,10 +183,17 @@ const handleAddItem = (prescriptionIndex, field) => {
             <>
               <div className="font-bold text-lg text-center">{prescription.medicationName}</div>
               <img
-                src={`http://localhost:5001/uploads/${prescription.image}`}
-                alt={prescription.medicationName}
-                className="w-24 rounded-md my-2"
-              />
+  src={
+    prescription.image &&
+    prescription.image !== '' &&
+    prescription.image !== 'undefined'
+      ? `http://localhost:5001/uploads/${prescription.image}`
+      : '/df-img.jpeg' // This should be inside your public/ folder
+  }
+  alt={prescription.medicationName}
+  className="w-24 rounded-md my-2"
+/>
+
             </>
           ) : (
             <>

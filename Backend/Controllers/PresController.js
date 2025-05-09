@@ -5,7 +5,12 @@ const PrescriptionHistory = require('../Models/PrescriptionHistory');
 
 exports.createPrescription = async (req, res) => {
   try {
-    const { medicationName, doctorName, userId } = req.body;
+    const { medicationName, doctorName } = req.body;
+    const userId = req.body.userId;
+
+    if (!userId) {
+      return res.status(400).json({ success: false, message: 'User ID is required' });
+    }
 
     let tips = req.body.tips || [];
     let prescriptions = req.body.prescriptions || [];
@@ -13,7 +18,7 @@ exports.createPrescription = async (req, res) => {
     if (typeof tips === 'string') tips = [tips];
     if (typeof prescriptions === 'string') prescriptions = [prescriptions];
 
-    const image = req.file ? req.file.filename : 'default_med_image.jpg';
+    const image = req.file?.filename || ""; // default to empty string if no image
 
     const newPrescription = new Prescription({
       userId,
@@ -52,6 +57,8 @@ exports.createPrescription = async (req, res) => {
 
 
 
+
+
 // @desc Get all prescriptions
 exports.getAllPrescriptions = async (req, res) => {
   try {
@@ -66,35 +73,36 @@ exports.getAllPrescriptions = async (req, res) => {
 
 exports.updatePrescription = async (req, res) => {
   try {
-    const { medicationName, doctorName, prescriptions, tips } = req.body;
-    const updateData = {
+    const { medicationName, doctorName } = req.body;
+
+    const prescriptions = JSON.parse(req.body.prescriptions || '[]');
+    const tips = JSON.parse(req.body.tips || '[]');
+    const image = req.file?.filename;
+
+    const updatedData = {
       medicationName,
       doctorName,
-      prescriptions: JSON.parse(prescriptions),
-      tips: JSON.parse(tips),
+      prescriptions,
+      tips,
     };
-    if (req.file) updateData.image = req.file.filename;
 
-    const updated = await Prescription.findByIdAndUpdate(req.params.id, updateData, { new: true });
+    if (image) updatedData.image = image;
 
-    //  Save update history
-    const historyEntry = new PrescriptionHistory({
-      username: updated.username,
-      medicationName: updated.medicationName,
-      doctorName: updated.doctorName,
-      image: updated.image,
-      prescriptions: updated.prescriptions,
-      tips: updated.tips,
-      action: 'updated',
-    });
-    await historyEntry.save();
+    const updated = await Prescription.findByIdAndUpdate(
+      req.params.id,
+      updatedData,
+      { new: true }
+    );
 
-    res.status(200).json(updated);
-  } catch (error) {
-    console.error("Update Error:", error);
-    res.status(500).json({ message: 'Update failed' });
+    if (!updated) return res.status(404).json({ message: 'Prescription not found' });
+
+    res.status(200).json({ message: 'Prescription updated successfully' });
+  } catch (err) {
+    console.error('Update error:', err.message);
+    res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
+
 
 
 exports.deletePrescription = async (req, res) => {
