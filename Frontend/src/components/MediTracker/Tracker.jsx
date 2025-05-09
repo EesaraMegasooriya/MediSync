@@ -104,15 +104,17 @@ function Tracker() {
           </div>
           <p className="mt-9 text-gray-500 font-poppins font-bold">Your health, our commitment. We care, you heal.</p>
           <div className="flex gap-4 mt-9">
-            <a href="/tracker" className="bg-gradient-to-r from-[#3A8EF6] to-[#6F3AFA] text-white px-4 py-2 rounded-xl font-bold hover:bg-purple-700 active:bg-purple-900 transition duration-200">
-              View Prescriptions
-            </a>
-            <a href="/add-prescriptions" className="bg-gradient-to-r from-[#3A8EF6] to-[#6F3AFA] text-white px-4 py-2 rounded-xl font-bold hover:bg-purple-700 active:bg-purple-900 transition duration-200">
-              Add Prescriptions
-            </a>
-            <a href="/prescription-history" className="bg-gradient-to-r from-[#3A8EF6] to-[#6F3AFA] text-white px-4 py-2 rounded-xl font-bold hover:bg-purple-700 active:bg-purple-900 transition duration-200">
-              Prescription History
-            </a>
+
+            <button className="bg-gradient-to-r from-[#3A8EF6] to-[#6F3AFA] text-white px-4 py-2 rounded-xl font-bold hover:bg-purple-700 active:bg-purple-900 transition duration-200">
+              <a href='/tracker'>View Prescriptions</a>
+            </button>
+            <button  className="bg-gradient-to-r from-[#3A8EF6] to-[#6F3AFA] text-white px-4 py-2 rounded-xl font-bold hover:bg-purple-700 active:bg-purple-900 transition duration-200" >
+              <a href='/add-prescriptions'>Add Prescriptions</a>
+            </button>
+            <button  className="bg-gradient-to-r from-[#3A8EF6] to-[#6F3AFA] text-white px-4 py-2 rounded-xl font-bold hover:bg-purple-700 active:bg-purple-900 transition duration-200" >
+              <a href='/prescription-history'> Prescription History</a>
+            </button>
+
           </div>
         </div>
         <div>
@@ -120,24 +122,94 @@ function Tracker() {
         </div>
       </div>
 
-      <div className="ml-32 mt-10">
-        <div className="overflow-x-auto whitespace-nowrap px-4 py-6">
-          <div className="flex gap-6">
-            {prescriptions.map((prescription, index) => (
-              <div key={index} className="flex flex-col items-center justify-center font-bold shadow-md rounded-lg p-4 text-center">
-                <img
-                  src={
-                    prescription.image && prescription.image !== 'undefined' && prescription.image !== ''
-                      ? `http://localhost:5001/uploads/${prescription.image}`
-                      : '/df-img.jpeg'
-                  }
-                  alt={prescription.medicationName}
-                  className="w-24 h-32 object-cover rounded-md mb-2"
-                />
-                <div>{prescription.medicationName}</div>
-                <div className="text-sm text-gray-600">{prescription.doctorName}</div>
-              </div>
-            ))}
+
+      <div className="ml-32">
+      <div className="overflow-x-auto  whitespace-nowrap px-4 py-6">
+      <div className="flex gap-6 ">
+        {prescriptions.map((prescription, index) => (
+          <div key={index} className="flex flex-col items-center justify-center font-bold shadow-md rounded-lg p-4 text-center">
+            <img
+  src={
+    prescription.image &&
+    prescription.image !== 'undefined' &&
+    prescription.image !== ''
+      ? `http://localhost:5001/uploads/${prescription.image}`
+      : '/df-img.jpeg'
+  }
+  alt={prescription.medicationName}
+  className="w-24 h-32 object-cover rounded-md mb-2"
+/>
+
+
+            <div className="font-bold">{prescription.medicationName}</div>
+            <div className="text-sm text-gray-600">{prescription.doctorName}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+      </div>
+
+        <div className="text-3xl font-bold ml-32 mt-20 mb-5">View Recent Medics </div>
+
+
+     <div className="ml-32">
+
+     <div className="grid grid-cols-2 gap-6 ">
+  {prescriptions.map((prescription, index) => (
+    <div key={index} className="flex flex-col font-bold shadow-md rounded-lg p-4 w-[500px]">
+      <div className="flex gap-4">
+        {/* Left Section: Medication Info */}
+        <div className="flex flex-col items-center w-[200px]">
+          {!prescription.editing ? (
+            <>
+              <div className="font-bold text-lg text-center">{prescription.medicationName}</div>
+              <img
+  src={
+    prescription.image &&
+    prescription.image !== '' &&
+    prescription.image !== 'undefined'
+      ? `http://localhost:5001/uploads/${prescription.image}`
+      : '/df-img.jpeg' // This should be inside your public/ folder
+  }
+  alt={prescription.medicationName}
+  className="w-24 rounded-md my-2"
+/>
+
+            </>
+          ) : (
+            <>
+              <input
+                className="text-center font-medium"
+                value={prescription.medicationName}
+                onChange={(e) => handleInputChange(index, 'medicationName', e.target.value)}
+              />
+              <input type="file" onChange={(e) => handleImageChange(index, e.target.files[0])} />
+            </>
+          )}
+
+          <div className="flex gap-2 mt-2">
+            {prescription.editing ? (
+              <button
+                className="bg-green-500 text-white px-3 py-1 rounded-xl font-bold hover:bg-green-700"
+                onClick={() => handleSave(index)}
+              >
+                Save
+              </button>
+            ) : (
+              <button
+                className="bg-yellow-500 text-white px-3 py-1 rounded-xl font-bold hover:bg-yellow-700"
+                onClick={() => handleEdit(index)}
+              >
+                Edit
+              </button>
+            )}
+            <button
+              className="bg-red-500 text-white px-3 py-1 rounded-xl font-bold hover:bg-red-700"
+              onClick={() => handleDelete(prescription._id)}
+            >
+              Delete
+            </button>
+
           </div>
         </div>
       </div>
