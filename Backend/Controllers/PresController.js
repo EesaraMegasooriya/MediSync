@@ -1,7 +1,8 @@
+const Prescription = require('../Models/PresModel');
 const PrescriptionHistory = require('../Models/PrescriptionHistory');
-const Prescription = require('../Models/Prescription'); // assuming this is also imported
 
-// @desc Create prescription
+
+
 exports.createPrescription = async (req, res) => {
   try {
     const { medicationName, doctorName } = req.body;
@@ -17,7 +18,7 @@ exports.createPrescription = async (req, res) => {
     if (typeof tips === 'string') tips = [tips];
     if (typeof prescriptions === 'string') prescriptions = [prescriptions];
 
-    const image = req.file?.filename || 'default_med_image.jpg';
+    const image = req.file?.filename || ""; // default to empty string if no image
 
     const newPrescription = new Prescription({
       userId,
@@ -25,17 +26,38 @@ exports.createPrescription = async (req, res) => {
       doctorName,
       prescriptions,
       tips,
-      image
+      image,
     });
 
     await newPrescription.save();
 
-    res.status(201).json({ message: 'Prescription created successfully' });
+    const historyEntry = new PrescriptionHistory({
+      userId,
+      medicationName,
+      doctorName,
+      prescriptions,
+      tips,
+      image,
+      action: 'created',
+    });
+
+    await historyEntry.save();
+
+    res.status(201).json({ success: true, message: 'Prescription added successfully!' });
   } catch (error) {
-    console.error("Create Error:", error);
-    res.status(500).json({ message: 'Failed to create prescription' });
+    console.error("Internal server error:", error);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+
+
+
+
+
+
+
+
 
 // @desc Get all prescriptions
 exports.getAllPrescriptions = async (req, res) => {
@@ -43,12 +65,12 @@ exports.getAllPrescriptions = async (req, res) => {
     const prescriptions = await Prescription.find();
     res.status(200).json(prescriptions);
   } catch (error) {
-    console.error("Fetch Error:", error);
-    res.status(500).json({ message: 'Failed to fetch prescriptions' });
+    console.error("Error fetching prescriptions:", error);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
-// @desc Update prescription
+
 exports.updatePrescription = async (req, res) => {
   try {
     const { medicationName, doctorName } = req.body;
@@ -61,7 +83,7 @@ exports.updatePrescription = async (req, res) => {
       medicationName,
       doctorName,
       prescriptions,
-      tips
+      tips,
     };
 
     if (image) updatedData.image = image;
@@ -81,13 +103,14 @@ exports.updatePrescription = async (req, res) => {
   }
 };
 
-// @desc Delete prescription
+
+
 exports.deletePrescription = async (req, res) => {
   try {
     await Prescription.findByIdAndDelete(req.params.id);
-    res.status(200).json({ message: 'Prescription deleted successfully' });
+    res.status(200).json({ message: 'Deleted successfully' });
   } catch (error) {
     console.error("Delete Error:", error);
-    res.status(500).json({ message: 'Failed to delete prescription' });
+    res.status(500).json({ message: 'Delete failed' });
   }
 };
