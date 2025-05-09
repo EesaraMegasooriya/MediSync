@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "lucide-react": "^0.508.0",
     "sweetalert2": "^11.21.0"
   },
   "devDependencies": {
