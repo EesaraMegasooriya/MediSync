@@ -1,5 +1,5 @@
 const PrescriptionHistory = require('../Models/PrescriptionHistory');
-const Prescription = require('../Models/Prescription'); // assuming this is also imported
+const Prescription = require('../Models/PresModel'); // assuming this is also imported
 
 // @desc Create prescription
 exports.createPrescription = async (req, res) => {

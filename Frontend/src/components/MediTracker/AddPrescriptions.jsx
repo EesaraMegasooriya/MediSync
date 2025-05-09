@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import TrackImg2 from '../MediTracker/Images/Track2.png';
 import axios from 'axios';
