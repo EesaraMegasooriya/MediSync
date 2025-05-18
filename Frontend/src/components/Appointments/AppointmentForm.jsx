@@ -23,7 +23,7 @@ const AppointmentForm = () => {
   const [sendingReminder, setSendingReminder] = useState(false);
 
   const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
-
+  
   useEffect(() => {
     if (formData.email && emailError) {
       setEmailError(null);
@@ -75,8 +75,9 @@ const AppointmentForm = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem('token')}`
         },
-        body: JSON.stringify(emailData),
+        body: JSON.stringify(emailData)
       });
 
       const data = await response.json();
@@ -109,13 +110,21 @@ const AppointmentForm = () => {
       setEmailError(null);
     }
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
     const userId = localStorage.getItem('userId');
+    const token = localStorage.getItem('token'); // <-- FIXED HERE
+   
+  
     if (!userId) {
       return Swal.fire("Error", "You must be logged in to book an appointment", "error");
     }
+  
+  
+    // Validate email and other fields
     if (!emailRegex.test(formData.email)) {
       return Swal.fire("Invalid Email", "Please enter a valid email address.", "error");
     }
@@ -128,22 +137,29 @@ const AppointmentForm = () => {
     if (formData.note.length < 5 || formData.note.length > 200) {
       return Swal.fire("Invalid Note", "Note must be between 5 and 200 characters.", "error");
     }
-
+  
+    // Prepare data
+    const appointmentData = {
+      ...formData,  // Spread the form data
+      userId,       // Add userId to the data to identify the user
+    };
+  
+    // Start loading
     setLoading(true);
-
+  
     try {
+      // Send appointment data to backend with token in header
       const response = await fetch(API_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem('token')}`
+          "Authorization": `Bearer ${token}`,  // Include token in Authorization header
         },
-        body: JSON.stringify(formData),
-        userId
+        body: JSON.stringify(appointmentData), // Send the data along with userId
       });
-
+  
       const data = await response.json();
-
+  
       if (response.ok) {
         Swal.fire({
           title: "Appointment Added!",
@@ -152,7 +168,7 @@ const AppointmentForm = () => {
             : "Your appointment has been successfully added.",
           icon: "success",
         });
-
+  
         setFormData({
           email: "",
           doctorName: "",
@@ -163,7 +179,7 @@ const AppointmentForm = () => {
           note: "",
           sendReminders: true,
         });
-
+  
         setTimeout(() => {
           navigate("/appointments");
         }, 2000);
@@ -174,10 +190,10 @@ const AppointmentForm = () => {
       console.error(error);
       Swal.fire("Connection Error", "Failed to connect to the server.", "error");
     }
-
+  
     setLoading(false);
   };
-
+  
   return (
     <section className="flex justify-center items-center min-h-screen bg-gray-100 mt-20">
       <div className="bg-white p-6 w-full max-w-lg mx-auto rounded-lg shadow-lg">

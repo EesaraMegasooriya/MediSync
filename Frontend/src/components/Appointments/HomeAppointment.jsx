@@ -8,24 +8,34 @@ import Home from '../Home';
 const HomeAppointment = () => {
   const navigate = useNavigate();
   const [appointments, setAppointments] = useState([]); // State to hold the appointment data
+ 
 
   // Fetch appointments from the backend
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        const response = await fetch("http://localhost:5001/api/appointments"); // Your API endpoint
+        const token = localStorage.getItem('token'); // Assuming you store the token after login
+  
+        const response = await fetch("http://localhost:5173/api/appointments", {
+          headers: {
+            "Authorization": `Bearer ${token}`, // 🔑 Include token
+          },
+        });
+  
         if (!response.ok) {
           throw new Error("Failed to fetch appointments");
         }
+  
         const data = await response.json();
-        setAppointments(data); // Set appointments in state
+        setAppointments(data);
       } catch (error) {
         console.error("Error fetching appointments:", error);
       }
     };
-
+  
     fetchAppointments();
   }, []);
+  
 
   return (
     <div className="flex flex-col items-center bg-[#F1F5FE] min-h-screen p-10">

@@ -5,7 +5,7 @@ const sendEmail = require("./mailSender");
 // @route  POST /appointments
 exports.AddAppointment = async (req, res) => {
     try {
-        const userId = req.user._id; 
+        const userId = req.user.id; 
         const { email, doctorName, date, day, time, location, note, sendReminders } = req.body;
 
         const newAppointment = new Appointment({
@@ -59,8 +59,8 @@ Thank you for choosing MediSync!
 // @route  GET /appointments
 exports.GetAppointments = async (req, res) => {
     try {
-        const userId = req.user._id;
-        const appointments = await Appointment.find().sort({userId});
+        const userId = req.user.id;
+        const appointments = await Appointment.find().sort({ userId: 1 });
         res.status(200).json(appointments);
     } catch (error) {
         res.status(500).json({ message: "Failed to fetch appointments", error: error.message });
@@ -71,8 +71,8 @@ exports.GetAppointments = async (req, res) => {
 // @route  GET /appointments/:id
 exports.GetAppointmentById = async (req, res) => {
     try {
-        const userId = req.user._id;
-        const appointment = await Appointment.findOne({ _id: req.params.id, userId });
+        const userId = req.user.id;
+        const appointment = await Appointment.findOne({ _id: req.params.id });
         if (!appointment) {
             return res.status(404).json({ message: "Appointment not found" });
         }
@@ -86,8 +86,10 @@ exports.GetAppointmentById = async (req, res) => {
 // @route  PUT /appointments/:id
 exports.UpdateAppointment = async (req, res) => {
     try {
-        const userId = req.user._id;
-        const oldAppointment = await Appointment.findOne({ _id: req.params.id, userId });
+        const userId = req.user.id;
+        const appointmentId = req.params.id;
+
+        const oldAppointment = await Appointment.findOne({ _id: req.params.id });
         if (!oldAppointment) {
             return res.status(404).json({ message: "Appointment not found" });
         }
@@ -148,8 +150,8 @@ Thank you for choosing MediSync!
 // @route  DELETE /appointments/:id
 exports.DeleteAppointment = async (req, res) => {
     try {
-        const userId = req.user._id;
-        const deletedAppointment = await Appointment.findOne({ _id: req.params.id, userId });
+        const userId = req.user.id;
+        const deletedAppointment = await Appointment.findOne({ _id: req.params.id });
 
         if (!deletedAppointment) {
             return res.status(404).json({ message: "Appointment not found" });
@@ -184,8 +186,8 @@ Thank you for choosing MediSync!
 // @desc   Send test reminder email
 // @route  POST /appointments/test-reminder/:id
 exports.SendTestReminder = async (req, res) => {
-    try {const userId = req.user._id;
-        const appointment = await Appointment.findOne({ _id: req.params.id, userId });
+    try {const userId = req.user.id;
+        const appointment = await Appointment.findOne({ _id: req.params.id });
 
         if (!appointment) {
             return res.status(404).json({ message: "Appointment not found" });

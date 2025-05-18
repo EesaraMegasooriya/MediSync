@@ -29,7 +29,13 @@ const AppointmentUpdate = () => {
   useEffect(() => {
     const fetchAppointment = async () => {
       try {
-        const response = await fetch(`${API_URL}/${id}`);
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_URL}/${id}`, {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+        
         if (!response.ok) {
           throw new Error("Failed to fetch appointment data");
         }
@@ -98,12 +104,16 @@ const AppointmentUpdate = () => {
     setLoading(true);
 
     try {
+      const token = localStorage.getItem('token');
       const response = await fetch(`${API_URL}/${id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify(formData),
       });
-
+      
       if (!response.ok) {
         throw new Error("Failed to update appointment");
       }

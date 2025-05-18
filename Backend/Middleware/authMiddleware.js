@@ -2,33 +2,33 @@ const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 dotenv.config();
 
-module.exports = function(req, res, next) {
-    // Get token from:
-    // 1. Header (recommended)
-    const token = req.header('x-auth-token');
-    
-    // 2. Or from Authorization header (alternative)
-    // const token = req.header('Authorization')?.replace('Bearer ', '');
+module.exports = function (req, res, next) {
+  const authHeader = req.header('Authorization');
+  console.log("Authorization Header:", authHeader);
 
-    // Check if no token
-    if (!token) {
-        return res.status(401).json({ 
-            success: false,
-            message: 'No token, authorization denied' 
-        });
-    }
+  const token = authHeader && authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;
 
-    // Verify token
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        
-        // Attach user to request
-        req.user = decoded.user;
-        next();
-    } catch (err) {
-        res.status(401).json({ 
-            success: false,
-            message: 'Token is not valid' 
-        });
-    }
+  if (!token) {
+    console.log("Token missing");
+    return res.status(401).json({
+      success: false,
+      message: 'No token, authorization denied',
+    });
+  }
+
+  try {
+    console.log("Verifying token...");
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    console.log("Decoded token:", decoded);
+
+    req.user = decoded;
+    next();
+  } catch (err) {
+    console.error("JWT verification failed:", err.message);
+    return res.status(401).json({
+      success: false,
+      message: 'Token is not valid',
+    });
+  }
 };

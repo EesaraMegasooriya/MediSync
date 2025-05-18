@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { FaPlus, FaEdit, FaTrash, FaFilePdf, FaFileCsv, FaSearch } from "react-icons/fa";
+import Swal from "sweetalert2";
 
 const API_URL = "http://localhost:5001/api/appointments/";
 
@@ -22,6 +23,7 @@ const AppointmentList = () => {
           headers: {
             "Authorization": `Bearer ${token}`
         }
+        
       });
       if (!response.ok) throw new Error("Failed to fetch appointments");
 
@@ -48,18 +50,40 @@ const AppointmentList = () => {
 
   // Delete appointment
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this appointment?")) return;
-
-    try {
-      const response = await fetch(`${API_URL}${id}`, { method: "DELETE" });
-      if (!response.ok) throw new Error("Failed to delete appointment");
-
-      setAppointments(appointments.filter((appointment) => appointment._id !== id));
-      alert("Appointment deleted successfully!");
-    } catch (error) {
-      alert(error.message);
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you really want to delete this appointment?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel',
+    });
+  
+    if (result.isConfirmed) {
+      try {
+        // Get token from localStorage
+        const token = localStorage.getItem('token');
+        
+        // Send DELETE request to server
+        const response = await fetch(`${API_URL}/${id}`, {
+          method: "DELETE",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+          },
+        });
+  
+        // Check if the response is successful
+        if (!response.ok) throw new Error("Failed to delete appointment");
+  
+        // Update appointments list
+        setAppointments(appointments.filter((appointment) => appointment._id !== id));
+        Swal.fire("Deleted!", "The appointment has been deleted.", "success");
+      } catch (error) {
+        Swal.fire("Error", error.message, "error");
+      }
     }
   };
+
 
   // Generate PDF Report - Enhanced to include email and reminder status
   const generatePDF = () => {
